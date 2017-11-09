@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>smooth-landing.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,19 +51,19 @@
     <Compile Include="Drawing.cs" />
     <Compile Include="DTC.cs" />
     <Compile Include="XaramaButtonInfo.cs" />
-    <Compile Include="FrmFocus.cs">
+    <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmFocus.Designer.cs">
-      <DependentUpon>FrmFocus.cs</DependentUpon>
+    <Compile Include="FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Pomodoro.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XaramaButtonEngine.cs" />
     <Compile Include="XMLEngine.cs" />
-    <EmbeddedResource Include="FrmFocus.resx">
-      <DependentUpon>FrmFocus.cs</DependentUpon>
+    <EmbeddedResource Include="FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -87,6 +90,7 @@
   <ItemGroup>
     <Content Include="images\search.png" />
     <Content Include="images\tomato.png" />
+    <Content Include="smooth-landing.ico" />
     <Content Include="sound\chimes.wav" />
     <Content Include="sound\reminder.wav" />
     <Content Include="sound\rest-just-completed.wav" />

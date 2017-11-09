@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace SmoothLanding
 {
-    public partial class FrmFocus : Form
+    public partial class FrmMain : Form
     {
         #region Private Members
         Pomodoro pomodoro;
@@ -46,7 +46,7 @@ namespace SmoothLanding
         #endregion
 
         #region Constructors
-        public FrmFocus()
+        public FrmMain()
         {
             //strMainFolderPath = System.IO.Path.GetDirectoryName(Application.);
             strMainFolderPath = new System.IO.DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
@@ -67,7 +67,7 @@ namespace SmoothLanding
         #endregion
 
         #region Form Events
-        private void FrmFocus_Load(object sender, EventArgs e)
+        private void FrmMain_Load(object sender, EventArgs e)
         {
             pomodoro = new Pomodoro();
             pomodoro.OnWorkJustCompleted += Pomodoro_OnWorkJustCompleted;
@@ -119,6 +119,7 @@ namespace SmoothLanding
         private void cmdPause_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
             pomodoro.Pause();
+            pomodoro.BackToLife(2, 1, Pomodoro.StateEnum.Working, 3, 37);
         }
         private void cmdStart_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
@@ -136,20 +137,20 @@ namespace SmoothLanding
             Invalidate();
         }
       
-        private void FrmFocus_MouseDown(object sender, MouseEventArgs e)
+        private void FrmMain_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
             lastLocation = e.Location;
             foreach(XaramaButtonInfo b in buttons)
                 b.MouseDown(e.Location);
         }
-        private void FrmFocus_MouseUp(object sender, MouseEventArgs e)
+        private void FrmMain_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;
             foreach (XaramaButtonInfo b in buttons)
                 b.MouseUp(e.Location);
         }
-        private void FrmFocus_MouseMove(object sender, MouseEventArgs e)
+        private void FrmMain_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown)
             {

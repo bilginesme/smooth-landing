@@ -180,15 +180,23 @@ namespace SmoothLanding
 
             return percentage;
         }
+        public void BackToLife(int sliceNow, int pomodorosToday, StateEnum state, int minutes, int seconds)
+        {
+            this.pomodorosToday = pomodorosToday;
+            this.sliceNow = sliceNow;
+            this.state = state;
+            tsNow = new TimeSpan(0, minutes, seconds);
+            Pause();
+        }
         #endregion
 
         #region Public Properties
-        public TimeSpan TSNow { get { return tsNow; } }
         public StateEnum State { get { return state; } }
         public StatusEnum Status { get { return status; } }
         public int SliceNow { get { return sliceNow; } }
         public int PomodorosToday { get { return pomodorosToday; } }
-        public float SecondsPassed { get { return (float)tsNow.TotalSeconds; } }
+        public float Seconds { get { return (float)tsNow.Seconds; } }
+        public float Minutes { get { return (float)tsNow.Minutes; } }
         #endregion
     }
 }

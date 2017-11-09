@@ -16,7 +16,7 @@ namespace SmoothLanding
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            FrmFocus frm = new FrmFocus();
+            FrmMain frm = new FrmMain();
             Screen myScreen = Screen.FromControl(frm);
             System.Drawing.Rectangle area = myScreen.WorkingArea;
             frm.Left = area.Right - frm.Width - 10;

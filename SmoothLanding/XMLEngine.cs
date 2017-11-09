@@ -50,8 +50,12 @@ namespace SmoothLanding
             xmlWriter.WriteString(Convert.ToString((int)pomodoro.State));
             xmlWriter.WriteEndElement();
 
-            xmlWriter.WriteStartElement("SecondsPassed");
-            xmlWriter.WriteString(pomodoro.SecondsPassed.ToString());
+            xmlWriter.WriteStartElement("Minutes");
+            xmlWriter.WriteString(pomodoro.Minutes.ToString());
+            xmlWriter.WriteEndElement();
+
+            xmlWriter.WriteStartElement("Seconds");
+            xmlWriter.WriteString(pomodoro.Seconds.ToString());
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteEndElement();
