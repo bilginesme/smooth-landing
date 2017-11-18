@@ -12,14 +12,7 @@ namespace SmoothLanding
         public class ClickedArgs : EventArgs { public ClickedArgs() { }}
 
         #region Enums
-        public enum ContextEnum
-        {
-            NA, Book, BookProcess, ProjectInfo, ProjectPlanner, Next, Present, Previous,
-            Settings, Edit, WeeklyFocus, NewsItem, RefreshGoals, PragmaInstance, Segment, Block,
-            Year, Quarter, Month, Week, Day, Idea, IdeaGroup, Task, Goal, IdeaDesktopSelect, IdeaDesktopEdit,
-            ViewDay, ViewWeek, ViewMonth, ViewQuarter, ViewYear,
-            TaskPause, TaskComplete, TaskLock
-        }
+        public enum ContextEnum { NA, Start, Pause }
         #endregion
 
         #region Private Members
@@ -80,7 +73,11 @@ namespace SmoothLanding
         #endregion
 
         #region Public Methods
-        public void Draw(Graphics dc) { dc.DrawImage(GetCurrent(), rect.Location); }
+        public void Draw(Graphics dc)
+        {
+            if(!isHidden)
+                dc.DrawImage(GetCurrent(), rect.Location);
+        }
         public void Enable() { isEnabled = true; }
         public void Disable() { isEnabled = false; }
 
@@ -132,14 +129,14 @@ namespace SmoothLanding
         }
         public void MouseDown(Point p)
         {
-            if (IsWithin(p))
+            if (!isHidden && IsWithin(p))
                 isMouseDown = true;
             else
                 isMouseDown = false;
         }
         public void MouseUp(Point p)
         {
-            if (IsWithin(p) && isMouseDown)
+            if (!isHidden && IsWithin(p) && isMouseDown)
             {
                 OnClicked(this, new ClickedArgs()); 
             }

@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.timer60seconds = new System.Windows.Forms.Timer(this.components);
             this.timerAlert = new System.Windows.Forms.Timer(this.components);
+            this.ctxGeneral = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.tsInitialize = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxGeneral.SuspendLayout();
             this.SuspendLayout();
             // 
             // timer60seconds
@@ -43,8 +48,36 @@
             // timerAlert
             // 
             this.timerAlert.Enabled = true;
-            this.timerAlert.Interval = 17000;
+            this.timerAlert.Interval = 197000;
             this.timerAlert.Tick += new System.EventHandler(this.timerAlert_Tick);
+            // 
+            // ctxGeneral
+            // 
+            this.ctxGeneral.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsInitialize,
+            this.toolStripMenuItem1,
+            this.tsClose});
+            this.ctxGeneral.Name = "ctxPragmas";
+            this.ctxGeneral.Size = new System.Drawing.Size(118, 54);
+            // 
+            // tsInitialize
+            // 
+            this.tsInitialize.Name = "tsInitialize";
+            this.tsInitialize.Size = new System.Drawing.Size(117, 22);
+            this.tsInitialize.Text = "Initialize";
+            this.tsInitialize.Click += new System.EventHandler(this.tsInitialize_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(114, 6);
+            // 
+            // tsClose
+            // 
+            this.tsClose.Name = "tsClose";
+            this.tsClose.Size = new System.Drawing.Size(117, 22);
+            this.tsClose.Text = "Close";
+            this.tsClose.Click += new System.EventHandler(this.tsClose_Click);
             // 
             // FrmMain
             // 
@@ -52,14 +85,18 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(282, 48);
             this.DoubleBuffered = true;
+            this.ForeColor = System.Drawing.SystemColors.WindowText;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMain";
             this.Text = "Smooth Landing";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.FrmMain_Load);
+            this.DoubleClick += new System.EventHandler(this.FrmMain_DoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseUp);
+            this.ctxGeneral.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -68,5 +105,9 @@
 
         private System.Windows.Forms.Timer timer60seconds;
         private System.Windows.Forms.Timer timerAlert;
+        private System.Windows.Forms.ContextMenuStrip ctxGeneral;
+        private System.Windows.Forms.ToolStripMenuItem tsInitialize;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem tsClose;
     }
 }

@@ -90,8 +90,13 @@
   <ItemGroup>
     <Content Include="images\search.png" />
     <Content Include="images\tomato.png" />
+    <Content Include="images\vista\korfez.jpg" />
+    <Content Include="images\vista\lojman-detail.jpg" />
+    <Content Include="images\vista\lojman.jpg" />
     <Content Include="smooth-landing.ico" />
     <Content Include="sound\chimes.wav" />
+    <Content Include="sound\GlossyClick.mp3" />
+    <Content Include="sound\GlossyClick.wav" />
     <Content Include="sound\reminder.wav" />
     <Content Include="sound\rest-just-completed.wav" />
   </ItemGroup>
@@ -106,5 +111,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,9 +12,10 @@ namespace SmoothLanding
 {
     public class XMLEngine
     {
+        static string fileNameWithPath = "pomodoro.dat";
+
         public static void WritePomodoro(Pomodoro pomodoro)
         {
-            string fileNameWithPath = "pomodoro.dat";
             StringBuilder sb = CreateXML(pomodoro);
 
             using (StreamWriter sw = new StreamWriter(fileNameWithPath))
@@ -66,6 +67,54 @@ namespace SmoothLanding
             return sb;
         }
 
+        public static Pomodoro ReadFromXML(Pomodoro pomodoro)
+        {
+            if (!File.Exists(fileNameWithPath))
+            {
+                // factory settings are valid
+            }
+            else
+            {
+                using (StreamReader sr = new StreamReader(fileNameWithPath))
+                {
+                    string fileContent = sr.ReadToEnd();
+                    if(fileContent != string.Empty)
+                    {
+                        XDocument xDoc = XDocument.Parse(fileContent);
+                        var result = from c in xDoc.Descendants("Pomodoro")
+                                     select new
+                                     {
+                                         #region MyRegion
+                                         PomodorosToday = c.Element("PomodorosToday").Value,
+                                         SliceNow = c.Element("SliceNow").Value,
+                                         State = c.Element("State").Value,
+                                         Minutes = c.Element("Minutes").Value,
+                                         Seconds = c.Element("Seconds").Value
+                                         #endregion
+                                     };
+                        foreach (var el in result)
+                        {
+                            int pomodorosToday = Convert.ToInt16(el.PomodorosToday);
+                            int sliceNow = Convert.ToInt16(el.SliceNow);
+                            Pomodoro.StateEnum state = (Pomodoro.StateEnum)Convert.ToInt16(el.State);
+                            int minutes = Convert.ToInt16(el.Minutes);
+                            int seconds = Convert.ToInt16(el.Seconds);
+
+                            pomodoro.BackToLife(sliceNow, pomodorosToday, state, minutes, seconds);
+                        }
+                    }
+                    else
+                    {
+                        
+                    }
+                
+                }
+            }
+
+          
+
+            return pomodoro;
+        }
         private static void GetTwinParameters(string str, out int x, out int y)
         {
             x = 0;

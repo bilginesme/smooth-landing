@@ -15,13 +15,17 @@ namespace SmoothLanding
             public WorkJustCompletedArgs(int sliceCompleted) { SliceCompleted = sliceCompleted; }
         }
         public event EventHandler<RestJustCompletedArgs> OnRestJustCompleted;
-        public class RestJustCompletedArgs : EventArgs
-        {
-            public RestJustCompletedArgs() { }
-        }
+        public class RestJustCompletedArgs : EventArgs { public RestJustCompletedArgs() { }}
+
+        public event EventHandler<PausedArgs> OnPaused;
+        public class PausedArgs : EventArgs { public PausedArgs() { }}
+
+        public event EventHandler<StartedArgs> OnStarted;
+        public class StartedArgs : EventArgs { public StartedArgs() { } }
 
         public enum StatusEnum { NA, Running, Paused }
         public enum StateEnum { Initial, Working, WorkCompleted, RestingShort, RestingShortCompleted, RestingLong, RestingLongCompleted }
+        public enum WorkOrRestEnum { Work, Rest }
 
         #region Private Members
         public static int NumSlicesForPomodoro = 4;
@@ -53,6 +57,7 @@ namespace SmoothLanding
             ResetTime();
             status = StatusEnum.NA;
             state = StateEnum.Initial;
+
         }
         private void HandleState()
         {
@@ -63,7 +68,6 @@ namespace SmoothLanding
                 if (status == StatusEnum.Running)
                 {
                     ResetTime();
-                    state = StateEnum.Working;
                     sliceNow = 1;
                 }
             }
@@ -71,9 +75,10 @@ namespace SmoothLanding
             {
                 if(secondsPassed >= secondsWorking)
                 {
-                    status = StatusEnum.Paused;
                     state = StateEnum.WorkCompleted;
-                    OnWorkJustCompleted(this, new WorkJustCompletedArgs(sliceNow));
+                    Pause();
+                    if (this.OnWorkJustCompleted != null)
+                        OnWorkJustCompleted(this, new WorkJustCompletedArgs(sliceNow));
                 }
             }
             else if (state == StateEnum.WorkCompleted)
@@ -96,9 +101,10 @@ namespace SmoothLanding
             {
                 if (secondsPassed >= secondsRestingShort)
                 {
-                    status = StatusEnum.Paused;
+                    Pause();
                     state = StateEnum.RestingShortCompleted;
-                    OnRestJustCompleted(this, new RestJustCompletedArgs());
+                    if (this.OnRestJustCompleted != null)
+                        OnRestJustCompleted(this, new RestJustCompletedArgs());
                 }
             }
             else if (state == StateEnum.RestingShortCompleted)
@@ -114,9 +120,10 @@ namespace SmoothLanding
             {
                 if (secondsPassed >= secondsRestingLong)
                 {
+                    Pause();
                     state = StateEnum.RestingLongCompleted;
-                    status = StatusEnum.Paused;
-                    OnRestJustCompleted(this, new RestJustCompletedArgs());
+                    if (this.OnRestJustCompleted != null)
+                        OnRestJustCompleted(this, new RestJustCompletedArgs());
                 }
             }
             else if (state == StateEnum.RestingLongCompleted)
@@ -133,11 +140,17 @@ namespace SmoothLanding
         public void Start()
         {
             status = StatusEnum.Running;
+            if (this.OnStarted != null)
+                OnStarted(this, new StartedArgs());
+            
             HandleState();
         }
         public void Pause()
         {
             status = StatusEnum.Paused;
+            if (this.OnPaused != null)
+                OnPaused(this, new PausedArgs());
+            
         }
         public void AddOneSecond()
         {
@@ -150,8 +163,25 @@ namespace SmoothLanding
         {
             string strResult = string.Empty;
 
-            string strMinutes = Convert.ToString((int)tsNow.Minutes);
-            string strSeconds = Convert.ToString((int)tsNow.Seconds);
+
+            long numTicks = 0;
+            long factor = 10000000L;
+            if (state == StateEnum.Working || state == StateEnum.WorkCompleted)
+            {
+                numTicks = (long)(factor * secondsWorking);
+            }
+            else if (state == StateEnum.RestingShort || state == StateEnum.RestingShortCompleted)
+            {
+                numTicks = (long)(factor * secondsRestingShort);
+            }
+            else if (state == StateEnum.RestingLong || state == StateEnum.RestingLongCompleted)
+            {
+                numTicks = (long)(factor * secondsRestingLong);
+            }
+            TimeSpan tsReverse = new TimeSpan(numTicks).Subtract(tsNow);
+
+            string strMinutes = Convert.ToString((int)tsReverse.Minutes);
+            string strSeconds = Convert.ToString((int)tsReverse.Seconds);
 
             if (strMinutes.Length == 1)
                 strMinutes = "0" + strMinutes;
