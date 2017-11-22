@@ -69,6 +69,7 @@ namespace SmoothLanding
                 {
                     ResetTime();
                     sliceNow = 1;
+                    state = StateEnum.Working;  // This is awkward, we should wire it to the Play() method
                 }
             }
             else if (state == StateEnum.Working)
@@ -131,6 +132,7 @@ namespace SmoothLanding
                 if (status == StatusEnum.Running)
                 {
                     Init();
+                    Pause();
                 }
             }
         } 
@@ -142,8 +144,6 @@ namespace SmoothLanding
             status = StatusEnum.Running;
             if (this.OnStarted != null)
                 OnStarted(this, new StartedArgs());
-            
-            HandleState();
         }
         public void Pause()
         {

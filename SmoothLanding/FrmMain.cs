@@ -70,8 +70,8 @@ namespace SmoothLanding
 
             formState = FormStateEnum.Compact;
             formSizes = new Dictionary<FormStateEnum, Size>();
-            formSizes.Add(FormStateEnum.Compact, new Size(282, 48));
-            formSizes.Add(FormStateEnum.CompactWithImage, new Size(282, 150));
+            formSizes.Add(FormStateEnum.Compact, new Size(283, 48));
+            formSizes.Add(FormStateEnum.CompactWithImage, new Size(283, 145));
 
             InitializeComponent();
         }
@@ -251,6 +251,7 @@ namespace SmoothLanding
             pomodoro.OnRestJustCompleted += Pomodoro_OnRestJustCompleted;
             pomodoro.OnStarted += Pomodoro_OnStarted;
             pomodoro.OnPaused += Pomodoro_OnPaused;
+            pomodoro.Pause();
         }
         #endregion
 
