@@ -281,11 +281,11 @@ namespace SmoothLanding
             playerAlert.Load();
             buttons = new List<XaramaButtonInfo>();
 
-            XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(257, 10), new Size(20, 20));
+            XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
             cmdStart.OnClicked += cmdStart_OnClicked;
             cmdStart.Hide();
 
-            XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(257, 10), new Size(20, 20));
+            XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
             cmdPause.OnClicked += cmdPause_OnClicked;
             cmdPause.Hide();
 
@@ -381,6 +381,9 @@ namespace SmoothLanding
             XMLEngine.WritePomodoro(pomodoro);
             Invalidate();
         }
+
+       
+
         private void timerAlert_Tick(object sender, EventArgs e)
         {
             if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted || pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted || pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)
@@ -397,6 +400,14 @@ namespace SmoothLanding
         private void tsClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+        private void tsSkipSession_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure to skip this session?", "Confirm initialize", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+            {
+                if (!pomodoro.SkipSession())
+                    MessageBox.Show("Cannot skip working sessions for now.");
+            }
         }
         #endregion
 
@@ -434,4 +445,3 @@ namespace SmoothLanding
         #endregion  
     }
 }
-

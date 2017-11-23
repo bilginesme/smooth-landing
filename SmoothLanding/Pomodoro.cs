@@ -218,6 +218,28 @@ namespace SmoothLanding
             tsNow = new TimeSpan(0, minutes, seconds);
             Pause();
         }
+        public bool SkipSession()
+        {
+            bool result = false;
+
+            if (state == StateEnum.RestingLong)
+            {
+                Init();
+                result = true;
+            }
+            else if (state == StateEnum.RestingShort)
+            {
+                ResetTime();
+                state = StateEnum.Working;
+                sliceNow++;
+                result = true;
+            }
+
+            if(result == true)
+                Pause();
+
+            return result;
+        }
         #endregion
 
         #region Public Properties

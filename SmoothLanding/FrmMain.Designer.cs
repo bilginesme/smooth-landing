@@ -34,6 +34,7 @@
             this.timerAlert = new System.Windows.Forms.Timer(this.components);
             this.ctxGeneral = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsInitialize = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsSkipSession = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsClose = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxGeneral.SuspendLayout();
@@ -55,27 +56,35 @@
             // 
             this.ctxGeneral.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsInitialize,
+            this.tsSkipSession,
             this.toolStripMenuItem1,
             this.tsClose});
             this.ctxGeneral.Name = "ctxPragmas";
-            this.ctxGeneral.Size = new System.Drawing.Size(118, 54);
+            this.ctxGeneral.Size = new System.Drawing.Size(139, 76);
             // 
             // tsInitialize
             // 
             this.tsInitialize.Name = "tsInitialize";
-            this.tsInitialize.Size = new System.Drawing.Size(117, 22);
+            this.tsInitialize.Size = new System.Drawing.Size(138, 22);
             this.tsInitialize.Text = "Initialize";
             this.tsInitialize.Click += new System.EventHandler(this.tsInitialize_Click);
+            // 
+            // tsSkipSession
+            // 
+            this.tsSkipSession.Name = "tsSkipSession";
+            this.tsSkipSession.Size = new System.Drawing.Size(138, 22);
+            this.tsSkipSession.Text = "Skip Session";
+            this.tsSkipSession.Click += new System.EventHandler(this.tsSkipSession_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(114, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(135, 6);
             // 
             // tsClose
             // 
             this.tsClose.Name = "tsClose";
-            this.tsClose.Size = new System.Drawing.Size(117, 22);
+            this.tsClose.Size = new System.Drawing.Size(138, 22);
             this.tsClose.Text = "Close";
             this.tsClose.Click += new System.EventHandler(this.tsClose_Click);
             // 
@@ -109,5 +118,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsInitialize;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem tsClose;
+        private System.Windows.Forms.ToolStripMenuItem tsSkipSession;
     }
 }
