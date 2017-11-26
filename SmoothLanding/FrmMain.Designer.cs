@@ -103,6 +103,8 @@
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.DoubleClick += new System.EventHandler(this.FrmMain_DoubleClick);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseDown);
+            this.MouseEnter += new System.EventHandler(this.FrmMain_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.FrmMain_MouseLeave);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FrmMain_MouseUp);
             this.ctxGeneral.ResumeLayout(false);

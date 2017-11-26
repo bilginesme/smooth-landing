@@ -58,6 +58,8 @@ namespace SmoothLanding
         const int wProgressRestLong = 30;
         const int yProgress = 40;
         const int xStartProgress = 10;
+
+        const double opacityMin = 0.85, opacityMax = 1.0;
         #endregion
 
         #region Constructors
@@ -312,6 +314,8 @@ namespace SmoothLanding
             bmpPomodoro = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato.png");
 
             GetVistaImages();
+
+            this.Opacity = opacityMin;
         }
         private void FrmMain_MouseDown(object sender, MouseEventArgs e)
         {
@@ -382,7 +386,15 @@ namespace SmoothLanding
             Invalidate();
         }
 
-       
+        private void FrmMain_MouseEnter(object sender, EventArgs e)
+        {
+            this.Opacity = opacityMax;
+        }
+
+        private void FrmMain_MouseLeave(object sender, EventArgs e)
+        {
+            this.Opacity = opacityMin;
+        }
 
         private void timerAlert_Tick(object sender, EventArgs e)
         {
