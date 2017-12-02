@@ -12,7 +12,7 @@ namespace SmoothLanding
         public class ClickedArgs : EventArgs { public ClickedArgs() { }}
 
         #region Enums
-        public enum ContextEnum { NA, Start, Pause }
+        public enum ContextEnum { NA, Start, Pause, EnlargeImage }
         #endregion
 
         #region Private Members
@@ -56,6 +56,17 @@ namespace SmoothLanding
         public XaramaButtonInfo(Bitmap imgNormal, Bitmap imgHovered, Bitmap imgDisabled, Rectangle rect, string toolTip, int id)
         {
             this.id = id;
+            this.imgNormal = imgNormal;
+            this.imgHovered = imgHovered;
+            this.imgDisabled = imgDisabled;
+            this.rect = rect;
+            this.toolTip = toolTip;
+            isEnabled = true;
+            isHovered = false;
+        }
+        public XaramaButtonInfo(Bitmap imgNormal, Bitmap imgHovered, Bitmap imgDisabled, Rectangle rect, string toolTip, ContextEnum context)
+        {
+            this.context = context;
             this.imgNormal = imgNormal;
             this.imgHovered = imgHovered;
             this.imgDisabled = imgDisabled;

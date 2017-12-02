@@ -50,6 +50,12 @@
   <ItemGroup>
     <Compile Include="Drawing.cs" />
     <Compile Include="DTC.cs" />
+    <Compile Include="FrmImageEnlarged.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmImageEnlarged.Designer.cs">
+      <DependentUpon>FrmImageEnlarged.cs</DependentUpon>
+    </Compile>
     <Compile Include="XaramaButtonInfo.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -62,6 +68,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XaramaButtonEngine.cs" />
     <Compile Include="XMLEngine.cs" />
+    <EmbeddedResource Include="FrmImageEnlarged.resx">
+      <DependentUpon>FrmImageEnlarged.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
@@ -90,9 +99,7 @@
   <ItemGroup>
     <Content Include="images\search.png" />
     <Content Include="images\tomato.png" />
-    <Content Include="images\vista\korfez.jpg" />
     <Content Include="images\vista\lojman-detail.jpg" />
-    <Content Include="images\vista\lojman.jpg" />
     <Content Include="smooth-landing.ico" />
     <Content Include="sound\chimes.wav" />
     <Content Include="sound\GlossyClick.mp3" />

@@ -244,7 +244,6 @@ namespace SmoothLanding
                 Bitmap bmpVista = (Bitmap)Bitmap.FromFile(strFile);
                 bmpVistas.Add(bmpVista);
             }
-            
         }
         private void InitPomodoro()
         {
@@ -256,6 +255,8 @@ namespace SmoothLanding
             pomodoro.Pause();
         }
         #endregion
+
+        FrmImageEnlarged frmImageEnlarged;
 
         #region Form Events
         private void FrmMain_Load(object sender, EventArgs e)
@@ -283,6 +284,8 @@ namespace SmoothLanding
             playerAlert.Load();
             buttons = new List<XaramaButtonInfo>();
 
+            //Bitmap bmpPlay = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
+            //XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlay, bmpPlay, bmpPlay, new Rectangle(247, 4, 30, 30), "Start", XaramaButtonInfo.ContextEnum.Start);
             XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
             cmdStart.OnClicked += cmdStart_OnClicked;
             cmdStart.Hide();
@@ -291,8 +294,14 @@ namespace SmoothLanding
             cmdPause.OnClicked += cmdPause_OnClicked;
             cmdPause.Hide();
 
+            XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
+                new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
+            cmdImageEnlrage.OnClicked += cmdImageEnlrage_OnClicked;
+            cmdImageEnlrage.Show();
+
             buttons.Add(cmdStart);
             buttons.Add(cmdPause);
+            buttons.Add(cmdImageEnlrage);
 
             pomodoro.Pause();
 
@@ -317,6 +326,7 @@ namespace SmoothLanding
 
             this.Opacity = opacityMin;
         }
+
         private void FrmMain_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
@@ -327,20 +337,37 @@ namespace SmoothLanding
         private void FrmMain_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown = false;
-            foreach (XaramaButtonInfo b in buttons)
-                b.MouseUp(e.Location);
+            
 
             if (e.Button == MouseButtons.Right)
+            {
                 ctxGeneral.Show(this, e.X, e.Y);
+            }
+            else
+            {
+                foreach (XaramaButtonInfo b in buttons)
+                    b.MouseUp(e.Location);
+
+                this.TopMost = true;
+                if (frmImageEnlarged != null)
+                    frmImageEnlarged.TopMost = true;
+            }
         }
         private void FrmMain_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown)
             {
+                this.TopMost = false;
+
                 this.Location = new Point(
                     (this.Location.X - lastLocation.X) + e.X, (this.Location.Y - lastLocation.Y) + e.Y);
 
                 this.Update();
+
+                Size size = new Size(FrmImageEnlarged.W, FrmImageEnlarged.H);
+                Point location = new Point(Location.X + formSizes[FormStateEnum.Compact].Width - size.Width, Location.Y + formSizes[FormStateEnum.Compact].Height);
+                if (frmImageEnlarged != null)
+                    frmImageEnlarged.SetLocation(location);
             }
             else
             {
@@ -379,6 +406,29 @@ namespace SmoothLanding
             playerClick.Play();
             pomodoro.Start();
         }
+        private void cmdImageEnlrage_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
+        {
+            Size size = new Size(FrmImageEnlarged.W, FrmImageEnlarged.H);
+            Point location = new Point(Location.X + formSizes[FormStateEnum.Compact].Width - size.Width, Location.Y + formSizes[FormStateEnum.Compact].Height);
+
+            this.TopMost = false;
+
+            frmImageEnlarged = new FrmImageEnlarged(location, bmpVistas[numVista], borderColor);
+            frmImageEnlarged.OnLocChanged += frm_OnLocChanged;
+            frmImageEnlarged.FormClosed += frm_FormClosed;
+            frmImageEnlarged.Show();
+        }
+
+        private void frm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            frmImageEnlarged = null;    
+        }
+
+        private void frm_OnLocChanged(object sender, FrmImageEnlarged.LocChangedArgs e)
+        {
+            this.Location = new Point(e.Loc.X + FrmImageEnlarged.W - formSizes[FormStateEnum.Compact].Width, e.Loc.Y - formSizes[FormStateEnum.Compact].Height);
+        }
+
         private void timer60seconds_Tick(object sender, EventArgs e)
         {
             pomodoro.AddOneSecond();
@@ -390,7 +440,6 @@ namespace SmoothLanding
         {
             this.Opacity = opacityMax;
         }
-
         private void FrmMain_MouseLeave(object sender, EventArgs e)
         {
             this.Opacity = opacityMin;
@@ -430,6 +479,14 @@ namespace SmoothLanding
             dc.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, this.Width, this.Height));
             DrawPomodorosCompleted(dc);
 
+            if (formState == FormStateEnum.CompactWithImage)
+            {
+                Rectangle rectVista = new Rectangle(2, formSizes[FormStateEnum.Compact].Height + 2,
+                    formSizes[FormStateEnum.CompactWithImage].Width - 4,
+                    formSizes[FormStateEnum.CompactWithImage].Height - formSizes[FormStateEnum.Compact].Height - 4);
+                dc.DrawImage(bmpVistas[numVista], rectVista);
+            }
+
             foreach (XaramaButtonInfo b in buttons)
                 b.Draw(dc);
 
@@ -441,14 +498,6 @@ namespace SmoothLanding
                 dc.DrawString("COMPLETED", fontTiny, brushNormal, new Rectangle(30, 2, 50, 10), sfLeft);
 
             DrawProgressBars(dc);
-
-            if(formState == FormStateEnum.CompactWithImage)
-            {
-                Rectangle rectVista = new Rectangle(2, formSizes[FormStateEnum.Compact].Height + 2, 
-                    formSizes[FormStateEnum.CompactWithImage].Width - 4, 
-                    formSizes[FormStateEnum.CompactWithImage].Height - formSizes[FormStateEnum.Compact].Height - 4);
-                dc.DrawImage(bmpVistas[numVista], rectVista);
-            }
 
             Rectangle rectBorder = new Rectangle(0, 0, this.Width - 1, this.Height-1);
             dc.DrawRectangle(new Pen(borderColor, 1), rectBorder);

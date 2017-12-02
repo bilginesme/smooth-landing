@@ -48,7 +48,6 @@ namespace SmoothLanding
 
             b.Enable();
         
-
             return b;
         }
         public static XaramaButtonInfo YellowGreenButton(XaramaButtonInfo.ContextEnum context, string txtButton, Point loc, Size size)
@@ -64,15 +63,15 @@ namespace SmoothLanding
 
             button.ImgNormal = new Bitmap(button.GetZeroRect().Width, button.GetZeroRect().Height);
             DTC.Drawing.DrawRoundedRect(button.ImgNormal, button.GetZeroRect(), Color.LightYellow, Color.LightGray);
-            Graphics.FromImage(button.ImgNormal).DrawString(txtButton, DTC.GetFont(7, FontStyle.Bold), new SolidBrush(Color.FromArgb(80, 80, 80)), button.GetZeroRect(), sfCenter);
+            Graphics.FromImage(button.ImgNormal).DrawString(txtButton, DTC.GetFont(9, FontStyle.Bold), new SolidBrush(Color.FromArgb(80, 80, 80)), button.GetZeroRect(), sfCenter);
 
             button.ImgHovered = new Bitmap(button.GetZeroRect().Width, button.GetZeroRect().Height);
             DTC.Drawing.DrawRoundedRect(button.ImgHovered, button.GetZeroRect(), Color.LightGreen, Color.LightGray);
-            Graphics.FromImage(button.ImgHovered).DrawString(txtButton, DTC.GetFont(7, FontStyle.Bold), new SolidBrush(Color.FromArgb(90, 90, 90)), button.GetZeroRect(), sfCenter);
+            Graphics.FromImage(button.ImgHovered).DrawString(txtButton, DTC.GetFont(9, FontStyle.Bold), new SolidBrush(Color.FromArgb(90, 90, 90)), button.GetZeroRect(), sfCenter);
 
             button.ImgDisabled = new Bitmap(button.GetZeroRect().Width, button.GetZeroRect().Height);
             DTC.Drawing.DrawRoundedRect(button.ImgDisabled, button.GetZeroRect(), Color.Gray, Color.LightGray);
-            Graphics.FromImage(button.ImgDisabled).DrawString(txtButton, DTC.GetFont(7, FontStyle.Bold), new SolidBrush(Color.FromArgb(80, 80, 80)), button.GetZeroRect(), sfCenter);
+            Graphics.FromImage(button.ImgDisabled).DrawString(txtButton, DTC.GetFont(9, FontStyle.Bold), new SolidBrush(Color.FromArgb(80, 80, 80)), button.GetZeroRect(), sfCenter);
 
             return button;
         }
