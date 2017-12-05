@@ -297,7 +297,7 @@ namespace SmoothLanding
             XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
                 new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
             cmdImageEnlrage.OnClicked += cmdImageEnlrage_OnClicked;
-            cmdImageEnlrage.Show();
+            cmdImageEnlrage.Hide();
 
             buttons.Add(cmdStart);
             buttons.Add(cmdPause);
@@ -333,6 +333,12 @@ namespace SmoothLanding
             lastLocation = e.Location;
             foreach (XaramaButtonInfo b in buttons)
                 b.MouseDown(e.Location);
+
+            if (frmImageEnlarged != null)
+            {
+                frmImageEnlarged.Close();
+                frmImageEnlarged = null;
+            }
         }
         private void FrmMain_MouseUp(object sender, MouseEventArgs e)
         {
@@ -350,7 +356,10 @@ namespace SmoothLanding
 
                 this.TopMost = true;
                 if (frmImageEnlarged != null)
+                {
                     frmImageEnlarged.TopMost = true;
+                }
+                    
             }
         }
         private void FrmMain_MouseMove(object sender, MouseEventArgs e)
@@ -439,10 +448,12 @@ namespace SmoothLanding
         private void FrmMain_MouseEnter(object sender, EventArgs e)
         {
             this.Opacity = opacityMax;
+            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Show();
         }
         private void FrmMain_MouseLeave(object sender, EventArgs e)
         {
             this.Opacity = opacityMin;
+            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
         }
 
         private void timerAlert_Tick(object sender, EventArgs e)

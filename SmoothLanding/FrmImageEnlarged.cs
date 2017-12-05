@@ -43,6 +43,7 @@ namespace SmoothLanding
             this.Location = loc;
         }
 
+        #region Form Events
         private void FrmImageEnlarged_Load(object sender, EventArgs e)
         {
             Size = new Size(W, H);
@@ -50,7 +51,7 @@ namespace SmoothLanding
 
             cmdClose = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, "X", new Point(Size.Width - 20 - 2, 2), new Size(20, 20));
             cmdClose.OnClicked += cmdClose_OnClicked;
-            cmdClose.Show();
+            cmdClose.Hide();
         }
         private void FrmImageEnlarged_MouseDown(object sender, MouseEventArgs e)
         {
@@ -82,11 +83,19 @@ namespace SmoothLanding
             mouseDown = false;
             cmdClose.MouseUp(e.Location);
         }
-
+        private void FrmImageEnlarged_MouseEnter(object sender, EventArgs e)
+        {
+            cmdClose.Show();
+        }
+        private void FrmImageEnlarged_MouseLeave(object sender, EventArgs e)
+        {
+            cmdClose.Hide();
+        }
         private void cmdClose_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
             this.Close();
         }
+        #endregion
 
         #region Overridden Form Events
         protected override void OnPaint(PaintEventArgs e)
@@ -102,8 +111,7 @@ namespace SmoothLanding
             cmdClose.Draw(dc);
         }
         protected override void OnPaintBackground(PaintEventArgs e) { }
-        #endregion
 
-        
+        #endregion
     }
 }

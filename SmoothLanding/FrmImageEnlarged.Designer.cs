@@ -46,6 +46,8 @@
             this.TopMost = true;
             this.Load += new System.EventHandler(this.FrmImageEnlarged_Load);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FrmImageEnlarged_MouseDown);
+            this.MouseEnter += new System.EventHandler(this.FrmImageEnlarged_MouseEnter);
+            this.MouseLeave += new System.EventHandler(this.FrmImageEnlarged_MouseLeave);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.FrmImageEnlarged_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.FrmImageEnlarged_MouseUp);
             this.ResumeLayout(false);
