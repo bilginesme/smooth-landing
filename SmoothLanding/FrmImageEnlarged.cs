@@ -86,10 +86,12 @@ namespace SmoothLanding
         private void FrmImageEnlarged_MouseEnter(object sender, EventArgs e)
         {
             cmdClose.Show();
+            Invalidate();
         }
         private void FrmImageEnlarged_MouseLeave(object sender, EventArgs e)
         {
             cmdClose.Hide();
+            Invalidate();
         }
         private void cmdClose_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
@@ -105,13 +107,12 @@ namespace SmoothLanding
 
             dc.DrawImage(bmpVista, new Rectangle(0, 0, Size.Width, Size.Height));
 
-            Rectangle rectBorder = new Rectangle(0, 0, this.Width - 1, this.Height - 1);
-            dc.DrawRectangle(new Pen(borderColor, 1), rectBorder);
+            Rectangle rectBorder = new Rectangle(1, 1, this.Width - 2, this.Height - 2);
+            dc.DrawRectangle(new Pen(borderColor, 3), rectBorder);
 
             cmdClose.Draw(dc);
         }
         protected override void OnPaintBackground(PaintEventArgs e) { }
-
         #endregion
     }
 }
