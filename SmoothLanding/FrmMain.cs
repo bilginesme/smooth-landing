@@ -16,6 +16,7 @@ namespace SmoothLanding
 
         #region Private Members
         Pomodoro pomodoro;
+        FrmImageEnlarged frmImageEnlarged;
 
         Dictionary<FormStateEnum, Size> formSizes;
         FormStateEnum formState;
@@ -254,9 +255,22 @@ namespace SmoothLanding
             pomodoro.OnPaused += Pomodoro_OnPaused;
             pomodoro.Pause();
         }
+        private void ChangeVista(int minusOrPlus)
+        {
+            if (minusOrPlus > 0)
+            {
+                numVista++;
+                if (numVista >= bmpVistas.Count)
+                    numVista = 0;
+            }
+            else
+            {
+                numVista--;
+                if (numVista < 0)
+                    numVista = bmpVistas.Count - 1;
+            }
+        }
         #endregion
-
-        FrmImageEnlarged frmImageEnlarged;
 
         #region Form Events
         private void FrmMain_Load(object sender, EventArgs e)
@@ -284,24 +298,33 @@ namespace SmoothLanding
             playerAlert.Load();
             buttons = new List<XaramaButtonInfo>();
 
-            //Bitmap bmpPlay = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
-            //XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlay, bmpPlay, bmpPlay, new Rectangle(247, 4, 30, 30), "Start", XaramaButtonInfo.ContextEnum.Start);
-            XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
+            Bitmap bmpPlayNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
+            Bitmap bmpPlayHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-hovered.png");
+            XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlayNormal, bmpPlayHovered, bmpPlayNormal, new Rectangle(247, 4, 32, 32), "Start", XaramaButtonInfo.ContextEnum.Start);
+            //XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
             cmdStart.OnClicked += cmdStart_OnClicked;
             cmdStart.Hide();
 
-            XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
+            Bitmap bmpPauseNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-normal.png");
+            Bitmap bmpPauseHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-hovered.png");
+            XaramaButtonInfo cmdPause = new XaramaButtonInfo(bmpPauseNormal, bmpPauseHovered, bmpPauseNormal, new Rectangle(247, 4, 32, 32), "Pause", XaramaButtonInfo.ContextEnum.Pause);
+            //XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
             cmdPause.OnClicked += cmdPause_OnClicked;
             cmdPause.Hide();
 
-            XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
-                new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
-            cmdImageEnlrage.OnClicked += cmdImageEnlrage_OnClicked;
-            cmdImageEnlrage.Hide();
+            Bitmap bmpEnlargeNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-normal.png");
+            Bitmap bmpEnlargeHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-hovered.png");
+            XaramaButtonInfo cmdImageEnlarge = new XaramaButtonInfo(bmpEnlargeNormal, bmpEnlargeHovered, bmpEnlargeNormal, 
+                new Rectangle(new Point(formSizes[FormStateEnum.Compact].Width - 20 - 9, formSizes[FormStateEnum.Compact].Height + 9), new Size(20, 20)), 
+                "Enlarge Image", XaramaButtonInfo.ContextEnum.EnlargeImage);
+            //XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
+            // new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
+            cmdImageEnlarge.OnClicked += cmdImageEnlarge_OnClicked;
+            cmdImageEnlarge.Hide();
 
             buttons.Add(cmdStart);
             buttons.Add(cmdPause);
-            buttons.Add(cmdImageEnlrage);
+            buttons.Add(cmdImageEnlarge);
 
             pomodoro.Pause();
 
@@ -415,7 +438,7 @@ namespace SmoothLanding
             playerClick.Play();
             pomodoro.Start();
         }
-        private void cmdImageEnlrage_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
+        private void cmdImageEnlarge_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
             Size size = new Size(FrmImageEnlarged.W, FrmImageEnlarged.H);
             Point location = new Point(Location.X + formSizes[FormStateEnum.Compact].Width - size.Width, Location.Y + formSizes[FormStateEnum.Compact].Height);
@@ -425,26 +448,29 @@ namespace SmoothLanding
             frmImageEnlarged = new FrmImageEnlarged(location, bmpVistas[numVista], borderColor);
             frmImageEnlarged.OnLocChanged += frm_OnLocChanged;
             frmImageEnlarged.FormClosed += frm_FormClosed;
+            frmImageEnlarged.OnImageChanged += frmImageEnlarged_OnImageChanged;
             frmImageEnlarged.Show();
         }
-
+        private void frmImageEnlarged_OnImageChanged(object sender, FrmImageEnlarged.ImageChangedArgs e)
+        {
+            ChangeVista(e.MinusOrPlus);
+            frmImageEnlarged.ChangeVista(bmpVistas[numVista]);
+            Invalidate();
+        }
         private void frm_FormClosed(object sender, FormClosedEventArgs e)
         {
             frmImageEnlarged = null;    
         }
-
         private void frm_OnLocChanged(object sender, FrmImageEnlarged.LocChangedArgs e)
         {
             this.Location = new Point(e.Loc.X + FrmImageEnlarged.W - formSizes[FormStateEnum.Compact].Width, e.Loc.Y - formSizes[FormStateEnum.Compact].Height);
         }
-
         private void timer60seconds_Tick(object sender, EventArgs e)
         {
             pomodoro.AddOneSecond();
             XMLEngine.WritePomodoro(pomodoro);
             Invalidate();
         }
-
         private void FrmMain_MouseEnter(object sender, EventArgs e)
         {
             this.Opacity = opacityMax;
@@ -455,7 +481,6 @@ namespace SmoothLanding
             this.Opacity = opacityMin;
             buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
         }
-
         private void timerAlert_Tick(object sender, EventArgs e)
         {
             if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted || pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted || pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)

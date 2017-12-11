@@ -12,7 +12,7 @@ namespace SmoothLanding
         public class ClickedArgs : EventArgs { public ClickedArgs() { }}
 
         #region Enums
-        public enum ContextEnum { NA, Start, Pause, EnlargeImage }
+        public enum ContextEnum { NA, Start, Pause, EnlargeImage, NextImage, PreviousImage }
         #endregion
 
         #region Private Members

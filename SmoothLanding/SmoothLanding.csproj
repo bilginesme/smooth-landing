@@ -97,15 +97,34 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="images\close-hovered.png" />
+    <Content Include="images\close-normal.png" />
+    <Content Include="images\enlarge-hovered.png" />
+    <Content Include="images\enlarge-normal.png" />
+    <Content Include="images\next-normal.png" />
+    <Content Include="images\next-hovered.png" />
+    <Content Include="images\pause-hovered.png" />
+    <Content Include="images\pause-normal.png" />
+    <Content Include="images\play-hovered.png" />
+    <Content Include="images\play-normal.png" />
+    <Content Include="images\previous-hovered.png" />
+    <Content Include="images\previous-normal.png" />
     <Content Include="images\search.png" />
     <Content Include="images\tomato.png" />
+    <Content Include="images\vista\korfez-manzara.jpg" />
+    <Content Include="images\vista\korfez-masa.jpg" />
+    <Content Include="images\vista\korfez-yokus.jpg" />
+    <Content Include="images\vista\korfez-zoom.jpg" />
     <Content Include="images\vista\lojman-detail.jpg" />
+    <Content Include="images\vista\phaser-bank.jpg" />
     <Content Include="smooth-landing.ico" />
     <Content Include="sound\chimes.wav" />
     <Content Include="sound\GlossyClick.mp3" />
     <Content Include="sound\GlossyClick.wav" />
+    <Content Include="sound\MagicSpellWhoosh.mp3" />
     <Content Include="sound\reminder.wav" />
     <Content Include="sound\rest-just-completed.wav" />
+    <Content Include="sound\work-just-completed.wav" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="stdole">
