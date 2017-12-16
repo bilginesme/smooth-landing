@@ -20,6 +20,9 @@ namespace SmoothLanding
         public event EventHandler<PausedArgs> OnPaused;
         public class PausedArgs : EventArgs { public PausedArgs() { }}
 
+        public event EventHandler<ForceRePaintArgs> OnForceRePaint;
+        public class ForceRePaintArgs : EventArgs { public ForceRePaintArgs() { } }
+
         public event EventHandler<StartedArgs> OnStarted;
         public class StartedArgs : EventArgs { public StartedArgs() { } }
 
@@ -80,6 +83,13 @@ namespace SmoothLanding
                     Pause();
                     if (this.OnWorkJustCompleted != null)
                         OnWorkJustCompleted(this, new WorkJustCompletedArgs(sliceNow));
+
+                    if(sliceNow >= NumSlicesForPomodoro)
+                    {
+                        pomodorosToday++;
+                        if (this.OnForceRePaint != null)
+                            OnForceRePaint(this, new ForceRePaintArgs());
+                    }
                 }
             }
             else if (state == StateEnum.WorkCompleted)
@@ -88,14 +98,9 @@ namespace SmoothLanding
                 {
                     ResetTime();
                     if (sliceNow < NumSlicesForPomodoro)
-                    {
                         state = StateEnum.RestingShort;
-                    }
                     else
-                    {
                         state = StateEnum.RestingLong;
-                        pomodorosToday++;
-                    }
                 }
             }
             else if (state == StateEnum.RestingShort)

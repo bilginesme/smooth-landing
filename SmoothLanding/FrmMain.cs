@@ -17,7 +17,7 @@ namespace SmoothLanding
         #region Private Members
         Pomodoro pomodoro;
         FrmImageEnlarged frmImageEnlarged;
-
+        
         Dictionary<FormStateEnum, Size> formSizes;
         FormStateEnum formState;
         List<Bitmap> bmpVistas;
@@ -35,11 +35,11 @@ namespace SmoothLanding
         Rectangle rectTimer;
         Brush brushTimer;
 
-        Font fontNormal, fontSmall, fontTiny; 
+        Font fontNormal, fontBold, fontSmall, fontTiny; 
         StringFormat sfLeft;
         Brush brushNormal;
 
-        Bitmap bmpPomodoro;
+        Bitmap bmpPomodoroNormal, bmpPomodoroTransparent;
 
         Color borderColor = Color.FromArgb(60, 63, 153, 41);
 
@@ -49,9 +49,9 @@ namespace SmoothLanding
         Color insideColorRestDisabled = Color.FromArgb(30, 255, 191, 135);
 
         Color borderColorWork = Color.FromArgb(255, 255, 165, 0);
-        Color borderColorWorkDisabled = Color.FromArgb(30, 255, 165, 0);
+        Color borderColorWorkDisabled = Color.FromArgb(100, 255, 165, 0);
         Color borderColorRest = Color.FromArgb(255, 255, 204, 100);
-        Color borderColorRestDisabled = Color.FromArgb(30, 255, 204, 100);
+        Color borderColorRestDisabled = Color.FromArgb(100, 255, 204, 100);
 
         const int hProgress = 6;
         const int wProgressWork = 50;
@@ -76,6 +76,7 @@ namespace SmoothLanding
             formSizes.Add(FormStateEnum.Compact, new Size(283, 48));
             formSizes.Add(FormStateEnum.CompactWithImage, new Size(283, 145));
 
+            
             InitializeComponent();
         }
         #endregion
@@ -100,28 +101,35 @@ namespace SmoothLanding
                 strMessage = "Rest is over.\nIf you have enough time to handle another pomodoro, go for it!";
             }
 
-            var notification = new System.Windows.Forms.NotifyIcon()
+            NotifyIcon notification = new System.Windows.Forms.NotifyIcon()
             {
                 Visible = true,
                 BalloonTipIcon = ToolTipIcon.Info,
-                BalloonTipTitle = "Smooth Landing", 
+                BalloonTipTitle = "Smooth Landing",
                 Icon = System.Drawing.SystemIcons.Application,
                 // optional - BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info,
                 // optional - BalloonTipTitle = "My Title",
-                BalloonTipText = strMessage,
+                BalloonTipText = "",
             };
 
-            // Display for 5 seconds.
+
+            notification.BalloonTipText = strMessage;
             notification.ShowBalloonTip(5000);
+
+            notification.BalloonTipClosed += (sender, e) => {
+                var thisIcon = (NotifyIcon)sender;
+                //thisIcon.Visible = false;
+                thisIcon.Dispose();
+            };
 
             // This will let the balloon close after it's 5 second timeout
             // for demonstration purposes. Comment this out to see what happens
             // when dispose is called while a balloon is still visible.
-            //Thread.Sleep(10000);
+            // System.Threading.Thread.Sleep(10000);
 
             // The notification should be disposed when you don't need it anymore,
             // but doing so will immediately close the balloon if it's visible.
-            //notification.Dispose();
+            // notification.Dispose();
         }
         private void Pomodoro_OnPaused(object sender, Pomodoro.PausedArgs e)
         {
@@ -149,13 +157,20 @@ namespace SmoothLanding
             DisplayBaloon();
             playerRestJustCompleted.Play();
         }
-        private void DrawPomodorosCompleted(Graphics dc)
+        private void DrawPomodoros(Graphics dc)
         {
-            if (pomodoro.PomodorosToday > 0)
+            for (int i = 0; i < 3; i++)
             {
-                for (int i = 0; i < pomodoro.PomodorosToday; i++)
-                    dc.DrawImage(bmpPomodoro, 150 + 25 * i, 5);
+                int posX = 130 + 25 * i;
+                
+                if(i < pomodoro.PomodorosToday)
+                    dc.DrawImage(bmpPomodoroNormal, posX, 5);
+                else
+                    dc.DrawImage(bmpPomodoroTransparent, posX, 5);
             }
+
+            if (pomodoro.PomodorosToday > 3)
+                dc.DrawString("+" + (pomodoro.PomodorosToday - 3), fontBold, brushNormal, 206, 11);
         }
         private void DrawProgressBars(Graphics dc)
         {
@@ -253,8 +268,15 @@ namespace SmoothLanding
             pomodoro.OnRestJustCompleted += Pomodoro_OnRestJustCompleted;
             pomodoro.OnStarted += Pomodoro_OnStarted;
             pomodoro.OnPaused += Pomodoro_OnPaused;
+            pomodoro.OnForceRePaint += Pomodoro_OnForceRePaint;
             pomodoro.Pause();
         }
+
+        private void Pomodoro_OnForceRePaint(object sender, Pomodoro.ForceRePaintArgs e)
+        {
+            Invalidate();
+        }
+
         private void ChangeVista(int minusOrPlus)
         {
             if (minusOrPlus > 0)
@@ -336,6 +358,7 @@ namespace SmoothLanding
             brushTimer = new SolidBrush(Color.FromArgb(40, 40, 40));
 
             fontNormal = DTC.GetFont(10, FontStyle.Regular);
+            fontBold = DTC.GetFont(10, FontStyle.Bold);
             fontSmall = DTC.GetFont(7, FontStyle.Regular);
             fontTiny = DTC.GetFont(6, FontStyle.Regular);
             sfLeft = new StringFormat();
@@ -343,7 +366,8 @@ namespace SmoothLanding
             sfLeft.LineAlignment = StringAlignment.Near;
             brushNormal = new SolidBrush(Color.FromArgb(90, 90, 90));
 
-            bmpPomodoro = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato.png");
+            bmpPomodoroNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
+            bmpPomodoroTransparent = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-transparent.png");
 
             GetVistaImages();
 
@@ -415,16 +439,9 @@ namespace SmoothLanding
         private void FrmMain_DoubleClick(object sender, EventArgs e)
         {
             if (formState == FormStateEnum.Compact)
-            {
                 formState = FormStateEnum.CompactWithImage;
-                numVista++;
-                if (numVista >= bmpVistas.Count)
-                    numVista = 0;
-            }
             else
-            {
                 formState = FormStateEnum.Compact;
-            }
 
             this.Size = formSizes[formState];
         }
@@ -513,7 +530,7 @@ namespace SmoothLanding
         {
             Graphics dc = e.Graphics;
             dc.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, this.Width, this.Height));
-            DrawPomodorosCompleted(dc);
+            DrawPomodoros(dc);
 
             if (formState == FormStateEnum.CompactWithImage)
             {
