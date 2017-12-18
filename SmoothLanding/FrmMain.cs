@@ -488,6 +488,9 @@ namespace SmoothLanding
             XMLEngine.WritePomodoro(pomodoro);
             Invalidate();
         }
+
+       
+
         private void FrmMain_MouseEnter(object sender, EventArgs e)
         {
             this.Opacity = opacityMax;
@@ -498,6 +501,11 @@ namespace SmoothLanding
             this.Opacity = opacityMin;
             buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
         }
+
+        #endregion
+
+
+        #region Menu Items
         private void timerAlert_Tick(object sender, EventArgs e)
         {
             if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted || pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted || pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)
@@ -523,6 +531,15 @@ namespace SmoothLanding
                     MessageBox.Show("Cannot skip working sessions for now.");
             }
         }
+        private void tsSettings_Click(object sender, EventArgs e)
+        {
+            FrmSettings frm = new FrmSettings();
+            frm.ShowDialog();
+        }
+        private void tsAbout_Click(object sender, EventArgs e)
+        {
+
+        } 
         #endregion
 
         #region Overridden Form Events

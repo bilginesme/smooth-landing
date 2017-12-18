@@ -180,7 +180,7 @@ namespace SmoothLanding
 
             dc.DrawImage(bmpVista, new Rectangle(0, 0, Size.Width, Size.Height));
 
-            Rectangle rectBorder = new Rectangle(1, 1, this.Width - 2, this.Height - 2);
+            Rectangle rectBorder = new Rectangle(1, 1, this.Width - 3, this.Height - 3);
             dc.DrawRectangle(new Pen(borderColor, 3), rectBorder);
 
             cmdClose.Draw(dc);

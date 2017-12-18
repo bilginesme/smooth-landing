@@ -37,6 +37,9 @@
             this.tsSkipSession = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsClose = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxGeneral.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,35 +61,58 @@
             this.tsInitialize,
             this.tsSkipSession,
             this.toolStripMenuItem1,
+            this.tsSettings,
+            this.tsAbout,
+            this.toolStripMenuItem2,
             this.tsClose});
             this.ctxGeneral.Name = "ctxPragmas";
-            this.ctxGeneral.Size = new System.Drawing.Size(139, 76);
+            this.ctxGeneral.Size = new System.Drawing.Size(153, 148);
             // 
             // tsInitialize
             // 
             this.tsInitialize.Name = "tsInitialize";
-            this.tsInitialize.Size = new System.Drawing.Size(138, 22);
+            this.tsInitialize.Size = new System.Drawing.Size(152, 22);
             this.tsInitialize.Text = "Initialize";
             this.tsInitialize.Click += new System.EventHandler(this.tsInitialize_Click);
             // 
             // tsSkipSession
             // 
             this.tsSkipSession.Name = "tsSkipSession";
-            this.tsSkipSession.Size = new System.Drawing.Size(138, 22);
+            this.tsSkipSession.Size = new System.Drawing.Size(152, 22);
             this.tsSkipSession.Text = "Skip Session";
             this.tsSkipSession.Click += new System.EventHandler(this.tsSkipSession_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(135, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
             // 
             // tsClose
             // 
             this.tsClose.Name = "tsClose";
-            this.tsClose.Size = new System.Drawing.Size(138, 22);
+            this.tsClose.Size = new System.Drawing.Size(152, 22);
             this.tsClose.Text = "Close";
             this.tsClose.Click += new System.EventHandler(this.tsClose_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(149, 6);
+            // 
+            // tsSettings
+            // 
+            this.tsSettings.Image = ((System.Drawing.Image)(resources.GetObject("tsSettings.Image")));
+            this.tsSettings.Name = "tsSettings";
+            this.tsSettings.Size = new System.Drawing.Size(152, 22);
+            this.tsSettings.Text = "Settings";
+            this.tsSettings.Click += new System.EventHandler(this.tsSettings_Click);
+            // 
+            // tsAbout
+            // 
+            this.tsAbout.Name = "tsAbout";
+            this.tsAbout.Size = new System.Drawing.Size(152, 22);
+            this.tsAbout.Text = "About";
+            this.tsAbout.Click += new System.EventHandler(this.tsAbout_Click);
             // 
             // FrmMain
             // 
@@ -121,5 +147,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem tsClose;
         private System.Windows.Forms.ToolStripMenuItem tsSkipSession;
+        private System.Windows.Forms.ToolStripMenuItem tsSettings;
+        private System.Windows.Forms.ToolStripMenuItem tsAbout;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
     }
 }
