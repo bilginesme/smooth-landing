@@ -504,7 +504,6 @@ namespace SmoothLanding
 
         #endregion
 
-
         #region Menu Items
         private void timerAlert_Tick(object sender, EventArgs e)
         {
@@ -525,11 +524,8 @@ namespace SmoothLanding
         }
         private void tsSkipSession_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure to skip this session?", "Confirm initialize", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-            {
-                if (!pomodoro.SkipSession())
-                    MessageBox.Show("Cannot skip working sessions for now.");
-            }
+            if (!pomodoro.SkipSession())
+                MessageBox.Show("Cannot skip working sessions for now.");
         }
         private void tsSettings_Click(object sender, EventArgs e)
         {

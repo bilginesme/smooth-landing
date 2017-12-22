@@ -239,6 +239,17 @@ namespace SmoothLanding
                 sliceNow++;
                 result = true;
             }
+            else if (state == StateEnum.WorkCompleted)
+            {
+                state = StateEnum.Working;
+                ResetTime();
+                result = true;
+
+                if (sliceNow < NumSlicesForPomodoro)
+                    sliceNow++;
+                else
+                    sliceNow = 1;
+            }
 
             if(result == true)
                 Pause();
