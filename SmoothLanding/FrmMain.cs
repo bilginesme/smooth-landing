@@ -31,12 +31,11 @@ namespace SmoothLanding
         List<XaramaButtonInfo> buttons;
 
         Font fontTimer;
-        StringFormat sfCenter;
         Rectangle rectTimer;
         Brush brushTimer;
 
         Font fontNormal, fontBold, fontSmall, fontTiny; 
-        StringFormat sfLeft;
+        StringFormat sfCenter, sfLeft;
         Brush brushNormal;
 
         Bitmap bmpPomodoroNormal, bmpPomodoroTransparent;
@@ -502,6 +501,8 @@ namespace SmoothLanding
             buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
         }
 
+      
+
         #endregion
 
         #region Menu Items
@@ -530,6 +531,11 @@ namespace SmoothLanding
         private void tsSettings_Click(object sender, EventArgs e)
         {
             FrmSettings frm = new FrmSettings();
+            frm.ShowDialog();
+        }
+        private void tsStatistics_Click(object sender, EventArgs e)
+        {
+            FrmStatistics frm = new FrmStatistics();
             frm.ShowDialog();
         }
         private void tsAbout_Click(object sender, EventArgs e)

@@ -66,6 +66,18 @@ namespace SmoothLanding
             return font;
         }
 
+        public static string GetSmartDate(DateTime theDate, bool addYear)
+        {
+            string result = "";
+
+            result = theDate.Day + " " +
+                System.Globalization.DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(theDate.Month) + " " +
+                System.Globalization.DateTimeFormatInfo.CurrentInfo.GetAbbreviatedDayName(theDate.DayOfWeek);
+            if (addYear) result += " " + theDate.Year.ToString().Substring(2, 2);
+            return result;
+        }
+
+
         public class Drawing
         {
             public static void DrawRedRect(Graphics dc, Rectangle rect)
