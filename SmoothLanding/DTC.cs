@@ -77,6 +77,31 @@ namespace SmoothLanding
             return result;
         }
 
+        public static string GetDateStringYYYYMMDD(DateTime dt)
+        {
+            string strYear = dt.Year.ToString();
+            string strMonth = dt.Month.ToString();
+            if (strMonth.Length == 1) strMonth = "0" + strMonth;
+            string strDay = dt.Day.ToString();
+            if (strDay.Length == 1) strDay = "0" + strDay;
+
+            return strYear + strMonth + strDay;
+        }
+        public static DateTime GetDateFromStringYYYYMMDD(string strDateTime)
+        {
+            DateTime dateTime = DateTime.MinValue;
+
+            if (strDateTime.Length == 8)
+            {
+                int year = Convert.ToInt16(strDateTime.Substring(0, 4));
+                int month = Convert.ToInt16(strDateTime.Substring(4, 2));
+                int day = Convert.ToInt16(strDateTime.Substring(6, 2));
+
+                dateTime = new DateTime(year, month, day);
+            }
+
+            return dateTime;
+        }
 
         public class Drawing
         {

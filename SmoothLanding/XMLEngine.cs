@@ -12,19 +12,88 @@ namespace SmoothLanding
 {
     public class XMLEngine
     {
-        static string fileNameWithPath = "pomodoro.dat";
+        static string fileNameWithPathPomodoro = "pomodoro.dat";
+        static string fileNameWithPathStatistics = "statistics.dat";
 
-        public static void WritePomodoro(Pomodoro pomodoro)
+        private static void GetTwinParameters(string str, out int x, out int y)
         {
-            StringBuilder sb = CreateXML(pomodoro);
-
-            using (StreamWriter sw = new StreamWriter(fileNameWithPath))
+            x = 0;
+            y = 0;
+            int locX = 0;
+            for (int i = 0; i < str.Length; i++)
             {
-                sw.Write(sb.ToString());
+                if (str.Substring(i, 1) == "x")
+                {
+                    locX = i;
+                    break;
+                }
+            }
+
+            if (locX > 0)
+            {
+                string str1 = "";
+                string str2 = "";
+
+                str1 = str.Substring(0, locX);
+                str2 = str.Substring(locX + 1, str.Length - locX - 1);
+
+                if (DTC.IsNumeric(str1) && DTC.IsNumeric(str2))
+                {
+                    x = Convert.ToInt16(str1);
+                    y = Convert.ToInt16(str2);
+                }
             }
         }
 
-        private static StringBuilder CreateXML(Pomodoro pomodoro)
+        public static Pomodoro ReadFromXML(Pomodoro pomodoro)
+        {
+            if (!File.Exists(fileNameWithPathPomodoro))
+            {
+                // factory settings are valid
+            }
+            else
+            {
+                using (StreamReader sr = new StreamReader(fileNameWithPathPomodoro))
+                {
+                    string fileContent = sr.ReadToEnd();
+                    if (fileContent != string.Empty)
+                    {
+                        XDocument xDoc = XDocument.Parse(fileContent);
+                        var result = from c in xDoc.Descendants("Pomodoro")
+                                     select new
+                                     {
+                                         #region MyRegion
+                                         PomodorosToday = c.Element("PomodorosToday").Value,
+                                         SliceNow = c.Element("SliceNow").Value,
+                                         State = c.Element("State").Value,
+                                         Minutes = c.Element("Minutes").Value,
+                                         Seconds = c.Element("Seconds").Value
+                                         #endregion
+                                     };
+                        foreach (var el in result)
+                        {
+                            int pomodorosToday = Convert.ToInt16(el.PomodorosToday);
+                            int sliceNow = Convert.ToInt16(el.SliceNow);
+                            Pomodoro.StateEnum state = (Pomodoro.StateEnum)Convert.ToInt16(el.State);
+                            int minutes = Convert.ToInt16(el.Minutes);
+                            int seconds = Convert.ToInt16(el.Seconds);
+
+                            pomodoro.BackToLife(sliceNow, pomodorosToday, state, minutes, seconds);
+                        }
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+            }
+
+
+
+            return pomodoro;
+        }
+        private static StringBuilder CreatePomodoroXML(Pomodoro pomodoro)
         {
             XmlWriterSettings xmlWriterSettings = new XmlWriterSettings()
             {
@@ -66,82 +135,108 @@ namespace SmoothLanding
 
             return sb;
         }
-
-        public static Pomodoro ReadFromXML(Pomodoro pomodoro)
+        public static void WritePomodoro(Pomodoro pomodoro)
         {
-            if (!File.Exists(fileNameWithPath))
+            StringBuilder sb = CreatePomodoroXML(pomodoro);
+
+            using (StreamWriter sw = new StreamWriter(fileNameWithPathPomodoro))
+            {
+                sw.Write(sb.ToString());
+            }
+        }
+
+        public static List<StatsInfo> ReadStatisticsFromXML()
+        {
+            List<StatsInfo> statistics = new List<StatsInfo>();
+
+            if (!File.Exists(fileNameWithPathStatistics))
             {
                 // factory settings are valid
             }
             else
             {
-                using (StreamReader sr = new StreamReader(fileNameWithPath))
+                using (StreamReader sr = new StreamReader(fileNameWithPathStatistics))
                 {
                     string fileContent = sr.ReadToEnd();
-                    if(fileContent != string.Empty)
+                    if (fileContent != string.Empty)
                     {
                         XDocument xDoc = XDocument.Parse(fileContent);
-                        var result = from c in xDoc.Descendants("Pomodoro")
+                        var result = from c in xDoc.Descendants("StatInfo")
                                      select new
                                      {
                                          #region MyRegion
-                                         PomodorosToday = c.Element("PomodorosToday").Value,
-                                         SliceNow = c.Element("SliceNow").Value,
-                                         State = c.Element("State").Value,
-                                         Minutes = c.Element("Minutes").Value,
-                                         Seconds = c.Element("Seconds").Value
+                                         TheDate = c.Element("TheDate").Value,
+                                         NumPomodorosRipe = c.Element("NumPomodorosRipe").Value,
+                                         NumPomodorosUnripe = c.Element("NumPomodorosUnripe").Value
                                          #endregion
                                      };
                         foreach (var el in result)
                         {
-                            int pomodorosToday = Convert.ToInt16(el.PomodorosToday);
-                            int sliceNow = Convert.ToInt16(el.SliceNow);
-                            Pomodoro.StateEnum state = (Pomodoro.StateEnum)Convert.ToInt16(el.State);
-                            int minutes = Convert.ToInt16(el.Minutes);
-                            int seconds = Convert.ToInt16(el.Seconds);
+                            DateTime theDate = DTC.GetDateFromStringYYYYMMDD(el.TheDate);
+                            int numPomodorosRipe = Convert.ToInt16(el.NumPomodorosRipe);
+                            int numPomodorosUnripe = Convert.ToInt16(el.NumPomodorosUnripe);
 
-                            pomodoro.BackToLife(sliceNow, pomodorosToday, state, minutes, seconds);
+                            statistics.Add(new StatsInfo(theDate, numPomodorosRipe, numPomodorosUnripe));
                         }
                     }
                     else
                     {
-                        
+
                     }
-                
+
                 }
             }
 
-          
-
-            return pomodoro;
+            return statistics;
         }
-        private static void GetTwinParameters(string str, out int x, out int y)
+        private static StringBuilder CreateStatisticsXML(List<StatsInfo> statistics)
         {
-            x = 0;
-            y = 0;
-            int locX = 0;
-            for (int i = 0; i < str.Length; i++)
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings()
             {
-                if (str.Substring(i, 1) == "x")
-                {
-                    locX = i;
-                    break;
-                }
+                Indent = true,
+                IndentChars = "\t",
+                NewLineOnAttributes = true
+            };
+
+            StringBuilder sb = new StringBuilder();
+            XmlWriter xmlWriter = XmlWriter.Create(sb, xmlWriterSettings);
+
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("Statistics");
+
+            foreach(StatsInfo stat in statistics)
+            {
+                xmlWriter.WriteStartElement("StatInfo");
+
+                xmlWriter.WriteStartElement("TheDate");
+                xmlWriter.WriteString(DTC.GetDateStringYYYYMMDD(stat.TheDate));
+                xmlWriter.WriteEndElement();
+
+                xmlWriter.WriteStartElement("NumPomodorosRipe");
+                xmlWriter.WriteString(stat.NumPomodorosRipe.ToString());
+                xmlWriter.WriteEndElement();
+
+                xmlWriter.WriteStartElement("NumPomodorosUnripe");
+                xmlWriter.WriteString(stat.NumPomodorosUnripe.ToString());
+                xmlWriter.WriteEndElement();
+
+                xmlWriter.WriteEndElement();    // StatInfo
             }
 
-            if (locX > 0)
+            xmlWriter.WriteEndElement();    // Statistics
+            xmlWriter.WriteEndDocument();
+
+            xmlWriter.Close();
+
+            return sb;
+        }
+        public static void WriteStatistics(List<StatsInfo> statistics)
+        {
+            StringBuilder sb = CreateStatisticsXML(statistics);
+
+            using (StreamWriter sw = new StreamWriter(fileNameWithPathStatistics))
             {
-                string str1 = "";
-                string str2 = "";
-
-                str1 = str.Substring(0, locX);
-                str2 = str.Substring(locX + 1, str.Length - locX - 1);
-
-                if (DTC.IsNumeric(str1) && DTC.IsNumeric(str2))
-                {
-                    x = Convert.ToInt16(str1);
-                    y = Convert.ToInt16(str2);
-                }
+                sw.Write(sb.ToString());
             }
         }
     }

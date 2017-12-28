@@ -12,13 +12,21 @@ namespace SmoothLanding
 {
     public partial class FrmStatistics : Form
     {
+        #region Private Members
         Font fontNormal, fontBold, fontSmall, fontTiny;
         StringFormat sfCenter, sfLeft;
         Brush brushNormal;
+        List<StatsInfo> statistics = new List<StatsInfo>();
+        Bitmap bmpPomodoroRipe, bmpPomodoroUnripe;
+        #endregion
 
         #region Constructors
         public FrmStatistics()
         {
+            statistics = XMLEngine.ReadStatisticsFromXML();
+            bmpPomodoroRipe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
+            bmpPomodoroUnripe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-unripe.png");
+
             InitializeComponent();
         }
         #endregion
@@ -51,7 +59,6 @@ namespace SmoothLanding
         }
         #endregion
 
-
         #region Private Methods
         private void DrawDays(Graphics dc)
         {
@@ -71,9 +78,44 @@ namespace SmoothLanding
                 Rectangle rect = new Rectangle(10, 50 + heightRow * d, 100, heightRow);
 
                 dc.DrawString(strDay, fontBold, brushNormal, rect, sfLeft);
+
+                StatsInfo stat = statistics.Find(i=>i.TheDate == theDay);
+                if (stat != null)
+                {
+                    int numTotalPomodoros = stat.NumPomodorosRipe + stat.NumPomodorosUnripe;
+
+                    for (int i=0;i<numTotalPomodoros;i++)
+                    {
+                        int posX, posY;
+                        posX = rect.Right + 10 + i * (bmpPomodoroRipe.Width + 5);
+                        posY = rect.Top - 5;
+
+                        if (i <= stat.NumPomodorosRipe-1)
+                            dc.DrawImage(bmpPomodoroRipe, posX, posY);
+                        else
+                            dc.DrawImage(bmpPomodoroUnripe, posX, posY);
+                    }
+                }
             }
         }
-        
+        private void CreateDummyData(object sender, EventArgs e)
+        {
+            List<StatsInfo> statistics = new List<StatsInfo>();
+
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 28), 2, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 27), 1, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 26), 2, 1));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 25), 0, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 24), 0, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 23), 2, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 22), 3, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 21), 2, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 20), 2, 0));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 19), 2, 1));
+            statistics.Add(new StatsInfo(new DateTime(2017, 12, 18), 1, 0));
+
+            XMLEngine.WriteStatistics(statistics);
+        }
         #endregion
 
         #region Overridden Form Events

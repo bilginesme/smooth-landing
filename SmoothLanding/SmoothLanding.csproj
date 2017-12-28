@@ -69,6 +69,7 @@
     <Compile Include="FrmSettings.Designer.cs">
       <DependentUpon>FrmSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="StatsInfo.cs" />
     <Compile Include="XaramaButtonInfo.cs" />
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
@@ -131,6 +132,7 @@
     <Content Include="images\search.png" />
     <Content Include="images\tomato-normal.png" />
     <Content Include="images\tomato-transparent.png" />
+    <Content Include="images\tomato-unripe.png" />
     <Content Include="images\vista\b-blok.jpg" />
     <Content Include="images\vista\korfez-manzara.jpg" />
     <Content Include="images\vista\korfez-masa.jpg" />
