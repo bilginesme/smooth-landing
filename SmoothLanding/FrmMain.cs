@@ -156,6 +156,14 @@ namespace SmoothLanding
             DisplayBaloon();
             playerRestJustCompleted.Play();
         }
+        private void Pomodoro_OnForceRePaint(object sender, Pomodoro.ForceRePaintArgs e)
+        {
+            Invalidate();
+        }
+        private void Pomodoro_OnPomodoroCompleted(object sender, Pomodoro.PomodoroCompletedArgs e)
+        {
+            XMLEngine.UpdateStatistics(pomodoro);
+        }
         private void DrawPomodoros(Graphics dc)
         {
             for (int i = 0; i < 3; i++)
@@ -268,14 +276,10 @@ namespace SmoothLanding
             pomodoro.OnStarted += Pomodoro_OnStarted;
             pomodoro.OnPaused += Pomodoro_OnPaused;
             pomodoro.OnForceRePaint += Pomodoro_OnForceRePaint;
+            pomodoro.OnPomodoroCompleted += Pomodoro_OnPomodoroCompleted;
+
             pomodoro.Pause();
         }
-
-        private void Pomodoro_OnForceRePaint(object sender, Pomodoro.ForceRePaintArgs e)
-        {
-            Invalidate();
-        }
-
         private void ChangeVista(int minusOrPlus)
         {
             if (minusOrPlus > 0)
@@ -435,6 +439,16 @@ namespace SmoothLanding
                     Invalidate();
             }
         }
+        private void FrmMain_MouseEnter(object sender, EventArgs e)
+        {
+            this.Opacity = opacityMax;
+            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Show();
+        }
+        private void FrmMain_MouseLeave(object sender, EventArgs e)
+        {
+            this.Opacity = opacityMin;
+            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
+        }
         private void FrmMain_DoubleClick(object sender, EventArgs e)
         {
             if (formState == FormStateEnum.Compact)
@@ -487,22 +501,6 @@ namespace SmoothLanding
             XMLEngine.WritePomodoro(pomodoro);
             Invalidate();
         }
-
-       
-
-        private void FrmMain_MouseEnter(object sender, EventArgs e)
-        {
-            this.Opacity = opacityMax;
-            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Show();
-        }
-        private void FrmMain_MouseLeave(object sender, EventArgs e)
-        {
-            this.Opacity = opacityMin;
-            buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.EnlargeImage).Hide();
-        }
-
-      
-
         #endregion
 
         #region Menu Items

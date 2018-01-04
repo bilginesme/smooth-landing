@@ -239,5 +239,24 @@ namespace SmoothLanding
                 sw.Write(sb.ToString());
             }
         }
+        public static void UpdateStatistics(Pomodoro pomodoro)
+        {
+            List<StatsInfo> statistics = ReadStatisticsFromXML();
+
+            StatsInfo statsToday = statistics.Find(i=>i.TheDate == pomodoro.TheDate);
+            if (statsToday != null)
+            {
+                statsToday.SetStatistics(pomodoro.PomodorosToday, 0);
+            }
+            else
+            {
+                statsToday = new StatsInfo(pomodoro.TheDate, pomodoro.PomodorosToday, 0);
+                statistics.Add(statsToday);
+            }
+
+            statistics = statistics.OrderByDescending(i=>i.TheDate).ToList();
+
+            WriteStatistics(statistics);
+        }
     }
 }

@@ -62,18 +62,24 @@ namespace SmoothLanding
         #region Private Methods
         private void DrawDays(Graphics dc)
         {
-            DateTime today = DateTime.Today;
+            List<DateTime> days = new List<DateTime>();
+            DateTime startDay = DateTime.MinValue;
 
             if (radioRangeLast7Days.Checked)
-                today = DateTime.Today;
+                startDay = DateTime.Today;
             else if (radioRangeWeekly.Checked)
-                today = DateTime.Today.StartOfWeek(DayOfWeek.Monday);
+                startDay = DateTime.Today.StartOfWeek(DayOfWeek.Monday).AddDays(6);
+
+            for (int i = 0; i < 7; i++)
+                days.Add(startDay.AddDays(-i));
+            if (radioRangeWeekly.Checked)
+                days.Reverse();
 
             int heightRow = 30;
 
-            for(int d=0;d<7;d++)
+            for(int d=0;d<days.Count;d++)
             {
-                DateTime theDay = today.AddDays(-d);
+                DateTime theDay = days[d];
                 string strDay = DTC.GetSmartDate(theDay, false);
                 Rectangle rect = new Rectangle(10, 50 + heightRow * d, 100, heightRow);
 
@@ -96,6 +102,7 @@ namespace SmoothLanding
                             dc.DrawImage(bmpPomodoroUnripe, posX, posY);
                     }
                 }
+                
             }
         }
         private void CreateDummyData(object sender, EventArgs e)

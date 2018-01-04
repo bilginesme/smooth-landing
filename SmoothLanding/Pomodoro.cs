@@ -8,6 +8,7 @@ namespace SmoothLanding
 {
     public class Pomodoro
     {
+        #region Definitions
         public event EventHandler<WorkJustCompletedArgs> OnWorkJustCompleted;
         public class WorkJustCompletedArgs : EventArgs
         {
@@ -15,10 +16,13 @@ namespace SmoothLanding
             public WorkJustCompletedArgs(int sliceCompleted) { SliceCompleted = sliceCompleted; }
         }
         public event EventHandler<RestJustCompletedArgs> OnRestJustCompleted;
-        public class RestJustCompletedArgs : EventArgs { public RestJustCompletedArgs() { }}
+        public class RestJustCompletedArgs : EventArgs { public RestJustCompletedArgs() { } }
 
         public event EventHandler<PausedArgs> OnPaused;
-        public class PausedArgs : EventArgs { public PausedArgs() { }}
+        public class PausedArgs : EventArgs { public PausedArgs() { } }
+
+        public event EventHandler<PomodoroCompletedArgs> OnPomodoroCompleted;
+        public class PomodoroCompletedArgs : EventArgs { public PomodoroCompletedArgs() { } }
 
         public event EventHandler<ForceRePaintArgs> OnForceRePaint;
         public class ForceRePaintArgs : EventArgs { public ForceRePaintArgs() { } }
@@ -28,19 +32,21 @@ namespace SmoothLanding
 
         public enum StatusEnum { NA, Running, Paused }
         public enum StateEnum { Initial, Working, WorkCompleted, RestingShort, RestingShortCompleted, RestingLong, RestingLongCompleted }
-        public enum WorkOrRestEnum { Work, Rest }
+        public enum WorkOrRestEnum { Work, Rest } 
+        #endregion
 
         #region Private Members
         public static int NumSlicesForPomodoro = 4;
-        public static float secondsWorking = 1500;
-        public static float secondsRestingShort = 300;
-        public static float secondsRestingLong = 900;
+        private static float secondsWorking = 1500;
+        private static float secondsRestingShort = 300;
+        private static float secondsRestingLong = 900;
         TimeSpan tsDelta;
         int sliceNow;
         int pomodorosToday;
         TimeSpan tsNow;
         StatusEnum status;
         StateEnum state;
+        private DateTime theDate;
         #endregion
 
         #region Constructors
@@ -48,7 +54,6 @@ namespace SmoothLanding
         {
             tsDelta = new TimeSpan(0, 0, 1);
             Init();
-            pomodorosToday = 0;
         }
         #endregion
 
@@ -56,6 +61,8 @@ namespace SmoothLanding
         private void ResetTime() { tsNow = new TimeSpan(); }
         private void Init()
         {
+            theDate = DateTime.Today;
+            pomodorosToday = 0;
             sliceNow = 0;
             ResetTime();
             status = StatusEnum.NA;
@@ -89,6 +96,8 @@ namespace SmoothLanding
                         pomodorosToday++;
                         if (this.OnForceRePaint != null)
                             OnForceRePaint(this, new ForceRePaintArgs());
+                        if (this.OnPomodoroCompleted != null)
+                            OnPomodoroCompleted(this, new PomodoroCompletedArgs());
                     }
                 }
             }
@@ -259,6 +268,7 @@ namespace SmoothLanding
         #endregion
 
         #region Public Properties
+        public DateTime TheDate { get { return theDate; } }
         public StateEnum State { get { return state; } }
         public StatusEnum Status { get { return status; } }
         public int SliceNow { get { return sliceNow; } }

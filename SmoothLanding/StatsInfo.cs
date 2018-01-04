@@ -18,6 +18,12 @@ namespace SmoothLanding
             this.numPomodorosUnripe = numPomodorosUnripe;
         }
 
+        public void SetStatistics(int numPomodorosRipe, int numPomodorosUnripe)
+        {
+            this.numPomodorosRipe = numPomodorosRipe;
+            this.numPomodorosUnripe = numPomodorosUnripe;
+        }
+
         #region Public Properties
         public DateTime TheDate { get { return theDate; } }
         public int NumPomodorosRipe { get { return numPomodorosRipe; } }
