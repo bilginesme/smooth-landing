@@ -109,7 +109,7 @@ namespace SmoothLanding
             xmlWriter.WriteStartElement("Pomodoro");
 
             xmlWriter.WriteStartElement("PomodorosToday");
-            xmlWriter.WriteString(pomodoro.PomodorosToday.ToString());
+            xmlWriter.WriteString(pomodoro.NumPomodorosToday.ToString());
             xmlWriter.WriteEndElement();
 
             xmlWriter.WriteStartElement("SliceNow");
@@ -246,11 +246,11 @@ namespace SmoothLanding
             StatsInfo statsToday = statistics.Find(i=>i.TheDate == pomodoro.TheDate);
             if (statsToday != null)
             {
-                statsToday.SetStatistics(pomodoro.PomodorosToday, 0);
+                statsToday.SetStatistics(pomodoro.NumPomodorosToday, 0);
             }
             else
             {
-                statsToday = new StatsInfo(pomodoro.TheDate, pomodoro.PomodorosToday, 0);
+                statsToday = new StatsInfo(pomodoro.TheDate, pomodoro.NumPomodorosToday, 0);
                 statistics.Add(statsToday);
             }
 

@@ -42,7 +42,7 @@ namespace SmoothLanding
         private static float secondsRestingLong = 900;
         TimeSpan tsDelta;
         int sliceNow;
-        int pomodorosToday;
+        int numPomodorosToday;
         TimeSpan tsNow;
         StatusEnum status;
         StateEnum state;
@@ -53,16 +53,20 @@ namespace SmoothLanding
         public Pomodoro()
         {
             tsDelta = new TimeSpan(0, 0, 1);
-            Init();
+            Init(true);
         }
         #endregion
 
         #region Private Methods
         private void ResetTime() { tsNow = new TimeSpan(); }
-        private void Init()
+        private void Init(bool isResetDay)
         {
-            theDate = DateTime.Today;
-            pomodorosToday = 0;
+            if(isResetDay)
+            {
+                theDate = DateTime.Today;
+                numPomodorosToday = 0;
+            }
+            
             sliceNow = 0;
             ResetTime();
             status = StatusEnum.NA;
@@ -93,7 +97,7 @@ namespace SmoothLanding
 
                     if(sliceNow >= NumSlicesForPomodoro)
                     {
-                        pomodorosToday++;
+                        numPomodorosToday++;
                         if (this.OnForceRePaint != null)
                             OnForceRePaint(this, new ForceRePaintArgs());
                         if (this.OnPomodoroCompleted != null)
@@ -145,7 +149,7 @@ namespace SmoothLanding
             {
                 if (status == StatusEnum.Running)
                 {
-                    Init();
+                    Init(false);
                     Pause();
                 }
             }
@@ -226,7 +230,7 @@ namespace SmoothLanding
         }
         public void BackToLife(int sliceNow, int pomodorosToday, StateEnum state, int minutes, int seconds)
         {
-            this.pomodorosToday = pomodorosToday;
+            this.numPomodorosToday = pomodorosToday;
             this.sliceNow = sliceNow;
             this.state = state;
             tsNow = new TimeSpan(0, minutes, seconds);
@@ -238,7 +242,7 @@ namespace SmoothLanding
 
             if (state == StateEnum.RestingLong)
             {
-                Init();
+                Init(false);
                 result = true;
             }
             else if (state == StateEnum.RestingShort)
@@ -272,7 +276,7 @@ namespace SmoothLanding
         public StateEnum State { get { return state; } }
         public StatusEnum Status { get { return status; } }
         public int SliceNow { get { return sliceNow; } }
-        public int PomodorosToday { get { return pomodorosToday; } }
+        public int NumPomodorosToday { get { return numPomodorosToday; } }
         public float Seconds { get { return (float)tsNow.Seconds; } }
         public float Minutes { get { return (float)tsNow.Minutes; } }
         #endregion

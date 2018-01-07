@@ -59,7 +59,8 @@ namespace SmoothLanding
         const int yProgress = 40;
         const int xStartProgress = 10;
 
-        const double opacityMin = 0.85, opacityMax = 1.0;
+        //const double opacityMin = 0.85, opacityMax = 1.0;
+        const double opacityMin = 1.0, opacityMax = 1.0;
         #endregion
 
         #region Constructors
@@ -170,14 +171,14 @@ namespace SmoothLanding
             {
                 int posX = 130 + 25 * i;
                 
-                if(i < pomodoro.PomodorosToday)
+                if(i < pomodoro.NumPomodorosToday)
                     dc.DrawImage(bmpPomodoroNormal, posX, 5);
                 else
                     dc.DrawImage(bmpPomodoroTransparent, posX, 5);
             }
 
-            if (pomodoro.PomodorosToday > 3)
-                dc.DrawString("+" + (pomodoro.PomodorosToday - 3), fontBold, brushNormal, 206, 11);
+            if (pomodoro.NumPomodorosToday > 3)
+                dc.DrawString("+" + (pomodoro.NumPomodorosToday - 3), fontBold, brushNormal, 206, 11);
         }
         private void DrawProgressBars(Graphics dc)
         {

@@ -66,14 +66,12 @@ namespace SmoothLanding
             DateTime startDay = DateTime.MinValue;
 
             if (radioRangeLast7Days.Checked)
-                startDay = DateTime.Today;
+                startDay = DateTime.Today.AddDays(-6);
             else if (radioRangeWeekly.Checked)
-                startDay = DateTime.Today.StartOfWeek(DayOfWeek.Monday).AddDays(6);
+                startDay = GetStartOfWeek();
 
             for (int i = 0; i < 7; i++)
-                days.Add(startDay.AddDays(-i));
-            if (radioRangeWeekly.Checked)
-                days.Reverse();
+                days.Add(startDay.AddDays(i));
 
             int heightRow = 30;
 
@@ -122,6 +120,25 @@ namespace SmoothLanding
             statistics.Add(new StatsInfo(new DateTime(2017, 12, 18), 1, 0));
 
             XMLEngine.WriteStatistics(statistics);
+        }
+        private DateTime GetStartOfWeek()
+        {
+            DateTime dt = DateTime.Today;
+            bool isOK = false;
+
+            while(!isOK)
+            {
+                if(dt.DayOfWeek == DayOfWeek.Monday)
+                {
+                    isOK = true;
+                }
+                else
+                {
+                    dt = dt.AddDays(-1);
+                }
+            }
+
+            return dt;
         }
         #endregion
 
