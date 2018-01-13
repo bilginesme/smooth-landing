@@ -18,11 +18,14 @@ namespace SmoothLanding
         Brush brushNormal;
         List<StatsInfo> statistics = new List<StatsInfo>();
         Bitmap bmpPomodoroRipe, bmpPomodoroUnripe;
+        Pomodoro pomodoro;
+        Rectangle rectFooter;
         #endregion
 
         #region Constructors
-        public FrmStatistics()
+        public FrmStatistics(Pomodoro pomodoro)
         {
+            this.pomodoro = pomodoro;
             statistics = XMLEngine.ReadStatisticsFromXML();
             bmpPomodoroRipe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
             bmpPomodoroUnripe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-unripe.png");
@@ -48,6 +51,8 @@ namespace SmoothLanding
             sfCenter.LineAlignment = StringAlignment.Center;
 
             brushNormal = new SolidBrush(Color.FromArgb(90, 90, 90));
+
+            rectFooter = new Rectangle(0, ClientSize.Height - 30, ClientSize.Width, 30);
         }
         private void radioRangeLast7Days_CheckedChanged(object sender, EventArgs e)
         {
@@ -74,21 +79,25 @@ namespace SmoothLanding
                 days.Add(startDay.AddDays(i));
 
             int heightRow = 30;
-
+            int numOverallPomodoros = 0;
             for(int d=0;d<days.Count;d++)
             {
                 DateTime theDay = days[d];
                 string strDay = DTC.GetSmartDate(theDay, false);
                 Rectangle rect = new Rectangle(10, 50 + heightRow * d, 100, heightRow);
 
+                if(theDay == pomodoro.TheDate)
+                    dc.FillRectangle(Brushes.FloralWhite, new Rectangle(0, rect.Top-2, this.Width, heightRow - 4));
+
                 dc.DrawString(strDay, fontBold, brushNormal, rect, sfLeft);
 
                 StatsInfo stat = statistics.Find(i=>i.TheDate == theDay);
                 if (stat != null)
                 {
-                    int numTotalPomodoros = stat.NumPomodorosRipe + stat.NumPomodorosUnripe;
+                    int numPomodoros = stat.NumPomodorosRipe + stat.NumPomodorosUnripe;
+                    numOverallPomodoros += numPomodoros;
 
-                    for (int i=0;i<numTotalPomodoros;i++)
+                    for (int i=0;i<numPomodoros;i++)
                     {
                         int posX, posY;
                         posX = rect.Right + 10 + i * (bmpPomodoroRipe.Width + 5);
@@ -100,8 +109,10 @@ namespace SmoothLanding
                             dc.DrawImage(bmpPomodoroUnripe, posX, posY);
                     }
                 }
-                
             }
+            
+            dc.FillRectangle(Brushes.Tomato, rectFooter);
+            dc.DrawString("Totally " + numOverallPomodoros + " pomodoros", fontBold, Brushes.White, rectFooter, sfCenter);
         }
         private void CreateDummyData(object sender, EventArgs e)
         {

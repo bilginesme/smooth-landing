@@ -69,6 +69,7 @@
     <Compile Include="FrmSettings.Designer.cs">
       <DependentUpon>FrmSettings.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingsInfo.cs" />
     <Compile Include="StatsInfo.cs" />
     <Compile Include="XaramaButtonInfo.cs" />
     <Compile Include="FrmMain.cs">
@@ -121,6 +122,9 @@
     <Content Include="images\close-normal.png" />
     <Content Include="images\enlarge-hovered.png" />
     <Content Include="images\enlarge-normal.png" />
+    <Content Include="images\info-hovered.png" />
+    <Content Include="images\info-normal.png" />
+    <Content Include="images\items.ico" />
     <Content Include="images\next-normal.png" />
     <Content Include="images\next-hovered.png" />
     <Content Include="images\pause-hovered.png" />
@@ -130,6 +134,7 @@
     <Content Include="images\previous-hovered.png" />
     <Content Include="images\previous-normal.png" />
     <Content Include="images\search.png" />
+    <Content Include="images\settings.ico" />
     <Content Include="images\tomato-normal.png" />
     <Content Include="images\tomato-transparent.png" />
     <Content Include="images\tomato-unripe.png" />

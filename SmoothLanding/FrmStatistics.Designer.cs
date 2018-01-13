@@ -31,16 +31,16 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStatistics));
             this.radioRangeLast7Days = new System.Windows.Forms.RadioButton();
             this.radioRangeWeekly = new System.Windows.Forms.RadioButton();
+            this.printDialog1 = new System.Windows.Forms.PrintDialog();
             this.SuspendLayout();
             // 
             // radioRangeLast7Days
             // 
             this.radioRangeLast7Days.AutoSize = true;
-            this.radioRangeLast7Days.Location = new System.Drawing.Point(13, 13);
+            this.radioRangeLast7Days.Location = new System.Drawing.Point(93, 13);
             this.radioRangeLast7Days.Name = "radioRangeLast7Days";
             this.radioRangeLast7Days.Size = new System.Drawing.Size(81, 17);
             this.radioRangeLast7Days.TabIndex = 0;
-            this.radioRangeLast7Days.TabStop = true;
             this.radioRangeLast7Days.Text = "Last 7 Days";
             this.radioRangeLast7Days.UseVisualStyleBackColor = true;
             this.radioRangeLast7Days.CheckedChanged += new System.EventHandler(this.radioRangeLast7Days_CheckedChanged);
@@ -48,7 +48,8 @@
             // radioRangeWeekly
             // 
             this.radioRangeWeekly.AutoSize = true;
-            this.radioRangeWeekly.Location = new System.Drawing.Point(100, 13);
+            this.radioRangeWeekly.Checked = true;
+            this.radioRangeWeekly.Location = new System.Drawing.Point(12, 13);
             this.radioRangeWeekly.Name = "radioRangeWeekly";
             this.radioRangeWeekly.Size = new System.Drawing.Size(61, 17);
             this.radioRangeWeekly.TabIndex = 1;
@@ -56,6 +57,10 @@
             this.radioRangeWeekly.Text = "Weekly";
             this.radioRangeWeekly.UseVisualStyleBackColor = true;
             this.radioRangeWeekly.CheckedChanged += new System.EventHandler(this.radioRangeWeekly_CheckedChanged);
+            // 
+            // printDialog1
+            // 
+            this.printDialog1.UseEXDialog = true;
             // 
             // FrmStatistics
             // 
@@ -81,5 +86,6 @@
 
         private System.Windows.Forms.RadioButton radioRangeLast7Days;
         private System.Windows.Forms.RadioButton radioRangeWeekly;
+        private System.Windows.Forms.PrintDialog printDialog1;
     }
 }

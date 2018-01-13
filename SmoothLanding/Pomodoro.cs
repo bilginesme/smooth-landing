@@ -64,6 +64,7 @@ namespace SmoothLanding
             if(isResetDay)
             {
                 theDate = DateTime.Today;
+                //theDate = new DateTime(2018, 1, 12);
                 numPomodorosToday = 0;
             }
             
@@ -269,6 +270,7 @@ namespace SmoothLanding
 
             return result;
         }
+        public bool IsDateDifferent() { return theDate != DateTime.Today; }
         #endregion
 
         #region Public Properties

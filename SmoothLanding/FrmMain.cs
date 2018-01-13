@@ -16,6 +16,7 @@ namespace SmoothLanding
 
         #region Private Members
         Pomodoro pomodoro;
+        SettingsInfo settings;
         FrmImageEnlarged frmImageEnlarged;
         
         Dictionary<FormStateEnum, Size> formSizes;
@@ -61,6 +62,7 @@ namespace SmoothLanding
 
         //const double opacityMin = 0.85, opacityMax = 1.0;
         const double opacityMin = 1.0, opacityMax = 1.0;
+        bool isStartedDayTransition = false;
         #endregion
 
         #region Constructors
@@ -76,6 +78,7 @@ namespace SmoothLanding
             formSizes.Add(FormStateEnum.Compact, new Size(283, 48));
             formSizes.Add(FormStateEnum.CompactWithImage, new Size(283, 145));
 
+            settings = new SettingsInfo();
             
             InitializeComponent();
         }
@@ -278,8 +281,9 @@ namespace SmoothLanding
             pomodoro.OnPaused += Pomodoro_OnPaused;
             pomodoro.OnForceRePaint += Pomodoro_OnForceRePaint;
             pomodoro.OnPomodoroCompleted += Pomodoro_OnPomodoroCompleted;
-
             pomodoro.Pause();
+
+            SetTsDateText();
         }
         private void ChangeVista(int minusOrPlus)
         {
@@ -296,16 +300,69 @@ namespace SmoothLanding
                     numVista = bmpVistas.Count - 1;
             }
         }
-        #endregion
-
-        #region Form Events
-        private void FrmMain_Load(object sender, EventArgs e)
+        private void SetTsDateText()
         {
-            //pomodoro = new Pomodoro();
-            InitPomodoro();
-            pomodoro = XMLEngine.ReadFromXML(pomodoro);
-            pomodoro.Pause();
-            
+            tsDate.Text = DTC.GetSmartDate(pomodoro.TheDate, false);
+        }
+        private void HandleDayTransition()
+        {
+            XaramaButtonInfo cmdInfo = buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Info);
+            if (pomodoro.IsDateDifferent())
+                cmdInfo.Show();
+            else
+                cmdInfo.Hide();
+
+            if(!isStartedDayTransition && pomodoro.IsDateDifferent() && settings.IsItAfterDayEndNow())
+            {
+                isStartedDayTransition = true;
+                if (MessageBox.Show("As the new day started, the session will be initialized.\n\nYou can always change the new day starting hour from the settings.", "A new day started", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.OK)
+                {
+                    InitPomodoro();
+                    isStartedDayTransition = false;
+                }
+            }
+        }
+        private void CreateButtons()
+        {
+            buttons = new List<XaramaButtonInfo>();
+
+            Bitmap bmpPlayNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
+            Bitmap bmpPlayHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-hovered.png");
+            XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlayNormal, bmpPlayHovered, bmpPlayNormal, new Rectangle(247, 4, 32, 32), "Start", XaramaButtonInfo.ContextEnum.Start);
+            //XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
+            cmdStart.OnClicked += cmdStart_OnClicked;
+            cmdStart.Show();
+
+            Bitmap bmpInfoNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\info-normal.png");
+            Bitmap bmpInfoHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\info-hovered.png");
+            XaramaButtonInfo cmdInfo = new XaramaButtonInfo(bmpInfoNormal, bmpInfoHovered, bmpInfoNormal, new Rectangle(226, 2, 24, 24), "Info", XaramaButtonInfo.ContextEnum.Info);
+            cmdInfo.OnClicked += cmdInfo_OnClicked;
+            cmdInfo.Hide();
+
+            Bitmap bmpPauseNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-normal.png");
+            Bitmap bmpPauseHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-hovered.png");
+            XaramaButtonInfo cmdPause = new XaramaButtonInfo(bmpPauseNormal, bmpPauseHovered, bmpPauseNormal, new Rectangle(247, 4, 32, 32), "Pause", XaramaButtonInfo.ContextEnum.Pause);
+            //XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
+            cmdPause.OnClicked += cmdPause_OnClicked;
+            cmdPause.Hide();
+
+            Bitmap bmpEnlargeNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-normal.png");
+            Bitmap bmpEnlargeHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-hovered.png");
+            XaramaButtonInfo cmdImageEnlarge = new XaramaButtonInfo(bmpEnlargeNormal, bmpEnlargeHovered, bmpEnlargeNormal,
+                new Rectangle(new Point(formSizes[FormStateEnum.Compact].Width - 20 - 9, formSizes[FormStateEnum.Compact].Height + 9), new Size(20, 20)),
+                "Enlarge Image", XaramaButtonInfo.ContextEnum.EnlargeImage);
+            //XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
+            // new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
+            cmdImageEnlarge.OnClicked += cmdImageEnlarge_OnClicked;
+            cmdImageEnlarge.Hide();
+
+            buttons.Add(cmdStart);
+            buttons.Add(cmdPause);
+            buttons.Add(cmdImageEnlarge);
+            buttons.Add(cmdInfo);
+        }
+        private void CreateSoundElements()
+        {
             playerWorkJustCompleted = new System.Media.SoundPlayer();
             playerWorkJustCompleted.SoundLocation = strPathSound + "work-just-completed.wav";
             playerWorkJustCompleted.Load();
@@ -322,38 +379,10 @@ namespace SmoothLanding
             playerClick.SoundLocation = strPathSound + "GlossyClick.wav";
 
             playerAlert.Load();
-            buttons = new List<XaramaButtonInfo>();
 
-            Bitmap bmpPlayNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
-            Bitmap bmpPlayHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-hovered.png");
-            XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlayNormal, bmpPlayHovered, bmpPlayNormal, new Rectangle(247, 4, 32, 32), "Start", XaramaButtonInfo.ContextEnum.Start);
-            //XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
-            cmdStart.OnClicked += cmdStart_OnClicked;
-            cmdStart.Hide();
-
-            Bitmap bmpPauseNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-normal.png");
-            Bitmap bmpPauseHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-hovered.png");
-            XaramaButtonInfo cmdPause = new XaramaButtonInfo(bmpPauseNormal, bmpPauseHovered, bmpPauseNormal, new Rectangle(247, 4, 32, 32), "Pause", XaramaButtonInfo.ContextEnum.Pause);
-            //XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
-            cmdPause.OnClicked += cmdPause_OnClicked;
-            cmdPause.Hide();
-
-            Bitmap bmpEnlargeNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-normal.png");
-            Bitmap bmpEnlargeHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-hovered.png");
-            XaramaButtonInfo cmdImageEnlarge = new XaramaButtonInfo(bmpEnlargeNormal, bmpEnlargeHovered, bmpEnlargeNormal, 
-                new Rectangle(new Point(formSizes[FormStateEnum.Compact].Width - 20 - 9, formSizes[FormStateEnum.Compact].Height + 9), new Size(20, 20)), 
-                "Enlarge Image", XaramaButtonInfo.ContextEnum.EnlargeImage);
-            //XaramaButtonInfo cmdImageEnlrage = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.EnlargeImage, " ", 
-            // new Point(formSizes[FormStateEnum.Compact].Width - 20 - 4, formSizes[FormStateEnum.Compact].Height + 4), new Size(20, 20));
-            cmdImageEnlarge.OnClicked += cmdImageEnlarge_OnClicked;
-            cmdImageEnlarge.Hide();
-
-            buttons.Add(cmdStart);
-            buttons.Add(cmdPause);
-            buttons.Add(cmdImageEnlarge);
-
-            pomodoro.Pause();
-
+        }
+        private void CreateBrushesAndFonts()
+        {
             fontTimer = DTC.GetFont(24, FontStyle.Bold);
             rectTimer = new Rectangle(0, 10, 110, 30);
             sfCenter = new StringFormat();
@@ -369,6 +398,20 @@ namespace SmoothLanding
             sfLeft.Alignment = StringAlignment.Near;
             sfLeft.LineAlignment = StringAlignment.Near;
             brushNormal = new SolidBrush(Color.FromArgb(90, 90, 90));
+        }
+        #endregion
+
+        #region Form Events
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            //pomodoro = new Pomodoro();
+            InitPomodoro();
+            pomodoro = XMLEngine.ReadFromXML(pomodoro);
+            pomodoro.Pause();
+
+            CreateSoundElements();
+            CreateButtons();
+            CreateBrushesAndFonts();
 
             bmpPomodoroNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
             bmpPomodoroTransparent = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-transparent.png");
@@ -377,7 +420,7 @@ namespace SmoothLanding
 
             this.Opacity = opacityMin;
         }
-
+        
         private void FrmMain_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
@@ -459,6 +502,10 @@ namespace SmoothLanding
 
             this.Size = formSizes[formState];
         }
+        private void cmdInfo_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
+        {
+            tsDate.PerformClick();
+        }
         private void cmdPause_OnClicked(object sender, XaramaButtonInfo.ClickedArgs e)
         {
             playerClick.Play();
@@ -500,16 +547,24 @@ namespace SmoothLanding
         {
             pomodoro.AddOneSecond();
             XMLEngine.WritePomodoro(pomodoro);
+            HandleDayTransition();
             Invalidate();
         }
-        #endregion
-
-        #region Menu Items
         private void timerAlert_Tick(object sender, EventArgs e)
         {
             if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted || pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted || pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)
                 playerAlert.Play();
         }
+        private void ctxGeneral_Opening(object sender, CancelEventArgs e)
+        {
+            if (!pomodoro.IsDateDifferent())
+                tsDate.BackColor = SystemColors.ActiveCaption;
+            else
+                tsDate.BackColor = Color.Tomato;
+        }
+        #endregion
+
+        #region Menu Items
         private void tsInitialize_Click(object sender, EventArgs e)
         {
             if (MessageBox.Show("Are you sure?", "Confirm initialize", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.Yes)
@@ -534,13 +589,18 @@ namespace SmoothLanding
         }
         private void tsStatistics_Click(object sender, EventArgs e)
         {
-            FrmStatistics frm = new FrmStatistics();
+            FrmStatistics frm = new FrmStatistics(pomodoro);
             frm.ShowDialog();
         }
         private void tsAbout_Click(object sender, EventArgs e)
         {
 
-        } 
+        }
+        private void tsDate_Click(object sender, EventArgs e)
+        {
+            if (pomodoro.IsDateDifferent())
+                MessageBox.Show("The program's date is different than today.\n\nIf this is what you intended, it's OK. If it's not, you may use the menu item Initialize.", "Different Date", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
         #endregion
 
         #region Overridden Form Events
