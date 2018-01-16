@@ -86,7 +86,7 @@ namespace SmoothLanding
                 string strDay = DTC.GetSmartDate(theDay, false);
                 Rectangle rect = new Rectangle(10, 50 + heightRow * d, 100, heightRow);
 
-                if(theDay == pomodoro.TheDate)
+                if(theDay == pomodoro.TheDay)
                     dc.FillRectangle(Brushes.FloralWhite, new Rectangle(0, rect.Top-2, this.Width, heightRow - 4));
 
                 dc.DrawString(strDay, fontBold, brushNormal, rect, sfLeft);
@@ -160,9 +160,6 @@ namespace SmoothLanding
             //dc.FillRectangle(new SolidBrush(Color.White), new Rectangle(0, 0, this.Width, this.Height));
 
             DrawDays(dc);
-
-            
-                
         }
         #endregion
     }

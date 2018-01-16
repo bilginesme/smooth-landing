@@ -62,23 +62,23 @@ namespace SmoothLanding
                         var result = from c in xDoc.Descendants("Pomodoro")
                                      select new
                                      {
-                                         #region MyRegion
+                                         TheDay = c.Element("TheDay").Value,
                                          PomodorosToday = c.Element("PomodorosToday").Value,
                                          SliceNow = c.Element("SliceNow").Value,
                                          State = c.Element("State").Value,
                                          Minutes = c.Element("Minutes").Value,
                                          Seconds = c.Element("Seconds").Value
-                                         #endregion
                                      };
                         foreach (var el in result)
                         {
+                            DateTime theDay = DTC.GetDateFromStringYYYYMMDD(el.TheDay);
                             int pomodorosToday = Convert.ToInt16(el.PomodorosToday);
                             int sliceNow = Convert.ToInt16(el.SliceNow);
                             Pomodoro.StateEnum state = (Pomodoro.StateEnum)Convert.ToInt16(el.State);
                             int minutes = Convert.ToInt16(el.Minutes);
                             int seconds = Convert.ToInt16(el.Seconds);
 
-                            pomodoro.BackToLife(sliceNow, pomodorosToday, state, minutes, seconds);
+                            pomodoro.BackToLife(theDay, sliceNow, pomodorosToday, state, minutes, seconds);
                         }
                     }
                     else
@@ -107,6 +107,10 @@ namespace SmoothLanding
 
             xmlWriter.WriteStartDocument();
             xmlWriter.WriteStartElement("Pomodoro");
+
+            xmlWriter.WriteStartElement("TheDay");
+            xmlWriter.WriteString(DTC.GetDateStringYYYYMMDD(pomodoro.TheDay));
+            xmlWriter.WriteEndElement();
 
             xmlWriter.WriteStartElement("PomodorosToday");
             xmlWriter.WriteString(pomodoro.NumPomodorosToday.ToString());
@@ -164,11 +168,9 @@ namespace SmoothLanding
                         var result = from c in xDoc.Descendants("StatInfo")
                                      select new
                                      {
-                                         #region MyRegion
                                          TheDate = c.Element("TheDate").Value,
                                          NumPomodorosRipe = c.Element("NumPomodorosRipe").Value,
                                          NumPomodorosUnripe = c.Element("NumPomodorosUnripe").Value
-                                         #endregion
                                      };
                         foreach (var el in result)
                         {
@@ -243,14 +245,14 @@ namespace SmoothLanding
         {
             List<StatsInfo> statistics = ReadStatisticsFromXML();
 
-            StatsInfo statsToday = statistics.Find(i=>i.TheDate == pomodoro.TheDate);
+            StatsInfo statsToday = statistics.Find(i=>i.TheDate == pomodoro.TheDay);
             if (statsToday != null)
             {
                 statsToday.SetStatistics(pomodoro.NumPomodorosToday, 0);
             }
             else
             {
-                statsToday = new StatsInfo(pomodoro.TheDate, pomodoro.NumPomodorosToday, 0);
+                statsToday = new StatsInfo(pomodoro.TheDay, pomodoro.NumPomodorosToday, 0);
                 statistics.Add(statsToday);
             }
 

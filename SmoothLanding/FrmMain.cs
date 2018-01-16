@@ -302,7 +302,7 @@ namespace SmoothLanding
         }
         private void SetTsDateText()
         {
-            tsDate.Text = DTC.GetSmartDate(pomodoro.TheDate, false);
+            tsDate.Text = DTC.GetSmartDate(pomodoro.TheDay, false);
         }
         private void HandleDayTransition()
         {

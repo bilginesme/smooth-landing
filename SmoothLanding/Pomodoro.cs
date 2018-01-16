@@ -46,7 +46,7 @@ namespace SmoothLanding
         TimeSpan tsNow;
         StatusEnum status;
         StateEnum state;
-        private DateTime theDate;
+        private DateTime theDay;
         #endregion
 
         #region Constructors
@@ -63,8 +63,8 @@ namespace SmoothLanding
         {
             if(isResetDay)
             {
-                theDate = DateTime.Today;
-                //theDate = new DateTime(2018, 1, 12);
+                theDay = DateTime.Today;
+                //theDate = new DateTime(2018, 1, 12);      // used for day transition, delete after 15th Feb 2018
                 numPomodorosToday = 0;
             }
             
@@ -72,7 +72,6 @@ namespace SmoothLanding
             ResetTime();
             status = StatusEnum.NA;
             state = StateEnum.Initial;
-
         }
         private void HandleState()
         {
@@ -229,12 +228,20 @@ namespace SmoothLanding
 
             return percentage;
         }
-        public void BackToLife(int sliceNow, int pomodorosToday, StateEnum state, int minutes, int seconds)
+        public void BackToLife(DateTime theDayFromFile, int sliceNow, int numPomodorosToday, StateEnum state, int minutes, int seconds)
         {
-            this.numPomodorosToday = pomodorosToday;
-            this.sliceNow = sliceNow;
-            this.state = state;
-            tsNow = new TimeSpan(0, minutes, seconds);
+            if(theDayFromFile == theDay)
+            {
+                this.numPomodorosToday = numPomodorosToday;
+                this.sliceNow = sliceNow;
+                this.state = state;
+                tsNow = new TimeSpan(0, minutes, seconds);
+            }
+            else
+            {
+                Init(true);
+            }
+            
             Pause();
         }
         public bool SkipSession()
@@ -270,11 +277,11 @@ namespace SmoothLanding
 
             return result;
         }
-        public bool IsDateDifferent() { return theDate != DateTime.Today; }
+        public bool IsDateDifferent() { return theDay != DateTime.Today; }
         #endregion
 
         #region Public Properties
-        public DateTime TheDate { get { return theDate; } }
+        public DateTime TheDay { get { return theDay; } }
         public StateEnum State { get { return state; } }
         public StatusEnum Status { get { return status; } }
         public int SliceNow { get { return sliceNow; } }
