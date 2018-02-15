@@ -30,6 +30,8 @@ namespace SmoothLandingUWP
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            
         }
 
         /// <summary>
@@ -40,6 +42,8 @@ namespace SmoothLandingUWP
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
+
+            
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -69,6 +73,9 @@ namespace SmoothLandingUWP
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
+
+                Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(300, 160));
+
                 Window.Current.Activate();
             }
         }

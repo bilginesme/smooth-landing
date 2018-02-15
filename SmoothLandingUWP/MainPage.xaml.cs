@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,6 +12,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Popups;
+using Windows.System.Threading;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -38,26 +37,6 @@ namespace SmoothLandingUWP
         string strMainFolderPath;
         string strPathSound;
         //System.Media.SoundPlayer playerWorkJustCompleted, playerRestJustCompleted, playerAlert, playerClick;
-        //List<XaramaButtonInfo> buttons;
-
-        //Font fontTimer;
-        //Rectangle rectTimer;
-        Brush brushTimer;
-
-        //Font fontNormal, fontBold, fontSmall, fontTiny;
-        //StringFormat sfCenter, sfLeft;
-        Brush brushNormal;
-
-        //Bitmap bmpPomodoroNormal, bmpPomodoroTransparent;
-        //Color borderColor = Color.FromArgb(60, 63, 153, 41);
-        //Color insideColorWork = Color.FromArgb(255, 255, 69, 0);
-        //Color insideColorWorkDisabled = Color.FromArgb(30, 255, 69, 0);
-        //Color insideColorRest = Color.FromArgb(255, 255, 191, 135);
-        //Color insideColorRestDisabled = Color.FromArgb(30, 255, 191, 135);
-        //Color borderColorWork = Color.FromArgb(255, 255, 165, 0);
-        //Color borderColorWorkDisabled = Color.FromArgb(100, 255, 165, 0);
-        //Color borderColorRest = Color.FromArgb(255, 255, 204, 100);
-        //Color borderColorRestDisabled = Color.FromArgb(100, 255, 204, 100);
 
         const int hProgress = 6;
         const int wProgressWork = 50;
@@ -66,8 +45,6 @@ namespace SmoothLandingUWP
         const int yProgress = 40;
         const int xStartProgress = 10;
 
-        //const double opacityMin = 0.85, opacityMax = 1.0;
-        const double opacityMin = 1.0, opacityMax = 1.0;
         bool isStartedDayTransition = false;
         #endregion
 
@@ -76,21 +53,57 @@ namespace SmoothLandingUWP
         public MainPage()
         {
             this.InitializeComponent();
-
-
-
+             
             //strMainFolderPath = System.IO.Path.GetDirectoryName(Application.);
             strMainFolderPath = new System.IO.DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
             strPathSound = strMainFolderPath + @"\sound\";
 
             formState = FormStateEnum.Compact;
             formSizes = new Dictionary<FormStateEnum, Size>();
-            formSizes.Add(FormStateEnum.Compact, new Size(300, 150));
-            formSizes.Add(FormStateEnum.CompactWithImage, new Size(300, 300));
+            formSizes.Add(FormStateEnum.Compact, new Size(300, 160));
+            formSizes.Add(FormStateEnum.CompactWithImage, new Size(300, 260));
 
             settings = new SettingsInfo();
 
+            /*
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(100, 100));
+            if (!ApplicationView.GetForCurrentView().TryResizeView(new Size(100, 100)))
+                Msgbox.Show("not possible");
+                */
+
             ThisIsIt();
+
+            /*
+            TextBlock textBlock1 = new TextBlock();
+            textBlock1.Text = "Hello, world!";
+            textBlock1.RenderTransform = new TranslateTransform { X = 50, Y = 50 };
+            theGrid.Children.Add(textBlock1);
+            */
+
+            CmdPlay.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
+            CmdPause.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
+            TxtCounter.RenderTransform = new TranslateTransform { X = 20, Y = 30 };
+            TxtStatus.RenderTransform = new TranslateTransform { X = 10, Y = 100 };
+
+            InitPomodoro();
+            pomodoro = XMLEngine.ReadFromXML(pomodoro);
+            pomodoro.Pause();
+
+            ElementSoundPlayer.State = ElementSoundPlayerState.On;
+            ElementSoundPlayer.Volume = 0.5;
+
+            DispatcherTimer Timer60Seconds = new DispatcherTimer();
+            Timer60Seconds.Tick += Timer60SecondsTick;
+            Timer60Seconds.Interval = new TimeSpan(0, 0, 1);
+            Timer60Seconds.Start();
+
+            UpdateEverything();
+        }
+
+        private void Timer60SecondsTick(object sender, object e)
+        {
+            pomodoro.AddOneSecond();
+            UpdateEverything();
         }
         #endregion
 
@@ -108,25 +121,45 @@ namespace SmoothLandingUWP
 
             //SetTsDateText();
         }
-        private void Pomodoro_OnPaused(object sender, Pomodoro.PausedArgs e)
+
+        private void UpdateEverything()
+        {
+            TxtCounter.Text = pomodoro.GetSmartDisplay();
+            TxtStatus.Text = pomodoro.Status.ToString();
+            //XMLEngine.WritePomodoro(pomodoro);
+            HandleDayTransition();
+        }
+
+        private void HandleDayTransition()
         {
             /*
-            if (buttons != null)
+            XaramaButtonInfo cmdInfo = buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Info);
+            if (pomodoro.IsDateDifferent())
+                cmdInfo.Show();
+            else
+                cmdInfo.Hide();
+
+            if (!isStartedDayTransition && pomodoro.IsDateDifferent() && settings.IsItAfterDayEndNow())
             {
-                buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Pause).Hide();
-                buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Start).Show();
+                isStartedDayTransition = true;
+                if (MessageBox.Show("As the new day started, the session will be initialized.\n\nYou can always change the new day starting hour from the settings.", "A new day started", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1) == DialogResult.OK)
+                {
+                    InitPomodoro();
+                    isStartedDayTransition = false;
+                }
             }
             */
         }
+
+        private void Pomodoro_OnPaused(object sender, Pomodoro.PausedArgs e)
+        {
+            CmdPause.Visibility = Visibility.Collapsed;
+            CmdPlay.Visibility = Visibility.Visible;
+        }
         private void Pomodoro_OnStarted(object sender, Pomodoro.StartedArgs e)
         {
-            /*
-            if (buttons != null)
-            {
-                buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Start).Hide();
-                buttons.Find(i => i.Context == XaramaButtonInfo.ContextEnum.Pause).Show();
-            }
-            */
+            CmdPause.Visibility = Visibility.Visible;
+            CmdPlay.Visibility = Visibility.Collapsed;
         }
         private void Pomodoro_OnWorkJustCompleted(object sender, Pomodoro.WorkJustCompletedArgs e)
         {
@@ -144,7 +177,7 @@ namespace SmoothLandingUWP
         }
         private void Pomodoro_OnForceRePaint(object sender, Pomodoro.ForceRePaintArgs e)
         {
-            //Invalidate();
+            UpdateEverything();
         }
         private void Pomodoro_OnPomodoroCompleted(object sender, Pomodoro.PomodoroCompletedArgs e)
         {
@@ -154,7 +187,7 @@ namespace SmoothLandingUWP
         {
             ViewModePreferences compactOptions = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
             compactOptions.CustomSize = formSizes[FormStateEnum.Compact];
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(formSizes[FormStateEnum.Compact]);
+            //ApplicationView.GetForCurrentView().SetPreferredMinSize(formSizes[FormStateEnum.Compact]);
             bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
         }
         #endregion
@@ -171,9 +204,35 @@ namespace SmoothLandingUWP
             else
                 formState = FormStateEnum.Compact;
 
-            ApplicationView.GetForCurrentView().TryResizeView(formSizes[formState]);
+            if (!ApplicationView.GetForCurrentView().TryResizeView(formSizes[formState]))
+                Msgbox.Show("not possible");
+        }
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // Call app specific code to subscribe to the service. For example:
+            ContentDialog subscribeDialog = new ContentDialog
+            {
+                Title = "Subscribe to App Service?",
+                Content = "Listen, watch, and play in high definition for only $9.99/month. Free to try, cancel anytime.",
+                CloseButtonText = "Not Now",
+                PrimaryButtonText = "Subscribe",
+                SecondaryButtonText = "Try it"
+            };
+
+            ContentDialogResult result = await subscribeDialog.ShowAsync();
+        }
+        private void CmdPause_Click(object sender, RoutedEventArgs e)
+        {
+            pomodoro.Pause();
+            UpdateEverything();
+        }
+        private void CmdPlay_Click(object sender, RoutedEventArgs e)
+        {
+            pomodoro.Start();
+            UpdateEverything();
         }
         #endregion
+
 
         public static class Msgbox
         {
