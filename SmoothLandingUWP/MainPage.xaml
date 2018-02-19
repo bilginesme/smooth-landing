@@ -56,6 +56,7 @@
         <Button x:Name="CmdPlay" Click="CmdPlay_Click" Style="{StaticResource RefreshButtonStyle}" Content="&#xEDB5;"  ElementSoundMode="Default" />
         <Button x:Name="CmdPause" Click="CmdPause_Click" Style="{StaticResource RefreshButtonStyle}"  Content="&#xEDB4;"  ElementSoundMode="Default" />
         <TextBlock x:Name="TxtCounter" Text="00:00" FontSize="48" FontWeight="Bold"  />
-        <TextBlock x:Name="TxtStatus" Text="status" FontSize="24" FontWeight="Normal"  />
+        <TextBlock x:Name="TxtStatus" Text="status" FontSize="24" FontWeight="Normal" Canvas.Left="11" Canvas.Top="92"  />
+        <TextBlock x:Name="TxtState" Text="state" FontSize="24" FontWeight="Normal" Canvas.Left="103" Canvas.Top="92"  />
     </Canvas>
 </Page>

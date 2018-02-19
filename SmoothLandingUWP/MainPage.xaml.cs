@@ -83,10 +83,11 @@ namespace SmoothLandingUWP
             CmdPlay.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
             CmdPause.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
             TxtCounter.RenderTransform = new TranslateTransform { X = 20, Y = 30 };
-            TxtStatus.RenderTransform = new TranslateTransform { X = 10, Y = 100 };
 
             InitPomodoro();
-            pomodoro = XMLEngine.ReadFromXML(pomodoro);
+
+            Action<Pomodoro> callback = o => { object result = o; };
+            XMLEngine.GetPomodoroFromXML(pomodoro, callback);
             pomodoro.Pause();
 
             ElementSoundPlayer.State = ElementSoundPlayerState.On;
@@ -94,15 +95,9 @@ namespace SmoothLandingUWP
 
             DispatcherTimer Timer60Seconds = new DispatcherTimer();
             Timer60Seconds.Tick += Timer60SecondsTick;
-            Timer60Seconds.Interval = new TimeSpan(0, 0, 1);
+            Timer60Seconds.Interval = new TimeSpan(0, 0, 0, 0, 1000);
             Timer60Seconds.Start();
 
-            UpdateEverything();
-        }
-
-        private void Timer60SecondsTick(object sender, object e)
-        {
-            pomodoro.AddOneSecond();
             UpdateEverything();
         }
         #endregion
@@ -122,14 +117,20 @@ namespace SmoothLandingUWP
             //SetTsDateText();
         }
 
-        private void UpdateEverything()
+        private async void UpdateEverything()
         {
             TxtCounter.Text = pomodoro.GetSmartDisplay();
             TxtStatus.Text = pomodoro.Status.ToString();
-            //XMLEngine.WritePomodoro(pomodoro);
+            TxtState.Text = pomodoro.State.ToString();
+            await XMLEngine.UpdatePomodoro(pomodoro);
             HandleDayTransition();
         }
 
+        private void Timer60SecondsTick(object sender, object e)
+        {
+            pomodoro.AddOneSecond();
+            UpdateEverything();
+        }
         private void HandleDayTransition()
         {
             /*
@@ -242,5 +243,7 @@ namespace SmoothLandingUWP
                 await dialog.ShowAsync();
             }
         }
+
+      
     }
 }
