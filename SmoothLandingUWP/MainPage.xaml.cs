@@ -13,6 +13,11 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Popups;
 using Windows.System.Threading;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Notifications;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -95,7 +100,7 @@ namespace SmoothLandingUWP
 
             DispatcherTimer Timer60Seconds = new DispatcherTimer();
             Timer60Seconds.Tick += Timer60SecondsTick;
-            Timer60Seconds.Interval = new TimeSpan(0, 0, 0, 0, 1000);
+            Timer60Seconds.Interval = new TimeSpan(0, 0, 0, 0, 10);
             Timer60Seconds.Start();
 
             UpdateEverything();
@@ -164,17 +169,11 @@ namespace SmoothLandingUWP
         }
         private void Pomodoro_OnWorkJustCompleted(object sender, Pomodoro.WorkJustCompletedArgs e)
         {
-            /*
-            DisplayBaloon();
-            playerWorkJustCompleted.Play();
-            */
+            DisplayToast();
         }
         private void Pomodoro_OnRestJustCompleted(object sender, Pomodoro.RestJustCompletedArgs e)
         {
-            /*
-            DisplayBaloon();
-            playerRestJustCompleted.Play();
-            */
+            DisplayToast();
         }
         private void Pomodoro_OnForceRePaint(object sender, Pomodoro.ForceRePaintArgs e)
         {
@@ -190,6 +189,53 @@ namespace SmoothLandingUWP
             compactOptions.CustomSize = formSizes[FormStateEnum.Compact];
             //ApplicationView.GetForCurrentView().SetPreferredMinSize(formSizes[FormStateEnum.Compact]);
             bool modeSwitched = await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, compactOptions);
+        }
+        private void DisplayToast()
+        {
+            string strMessage = string.Empty;
+            if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted)
+            {
+                if (pomodoro.SliceNow == 4)
+                    strMessage = "Now you can have a larger break of 15 minutes";
+                else
+                    strMessage = "Time to rest for 5 minutes";
+            }
+            else if (pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted)
+            {
+                strMessage = "OK! Rest is over, back to work.";
+            }
+            else if (pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)
+            {
+                strMessage = "Rest is over.\nIf you have enough time to handle another pomodoro, go for it!";
+            }
+
+            // Clear all existing notifications
+            ToastNotificationManager.History.Clear();
+
+            var longTime = new Windows.Globalization.DateTimeFormatting.DateTimeFormatter("longtime");
+            DateTimeOffset expiryTime = DateTime.Now.AddSeconds(15);
+            string expiryTimeString = longTime.Format(expiryTime);
+
+            XmlDocument toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText03);
+            //Find the text component of the content
+            XmlNodeList toastTextElements = toastXml.GetElementsByTagName("text");
+
+            // Set the text on the toast. 
+            // The first line of text in the ToastText02 template is treated as header text, and will be bold.
+            toastTextElements[0].AppendChild(toastXml.CreateTextNode("Smooth Landing"));
+            toastTextElements[1].AppendChild(toastXml.CreateTextNode(strMessage));
+
+            // Set the duration on the toast
+            IXmlNode toastNode = toastXml.SelectSingleNode("/toast");
+            ((XmlElement)toastNode).SetAttribute("duration", "long");
+
+            // Create the actual toast object using this toast specification.
+            ToastNotification toast = new ToastNotification(toastXml);
+
+            toast.ExpirationTime = expiryTime;
+
+            // Send the toast.
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
         #endregion
 
@@ -234,7 +280,6 @@ namespace SmoothLandingUWP
         }
         #endregion
 
-
         public static class Msgbox
         {
             static public async void Show(string mytext)
@@ -243,7 +288,5 @@ namespace SmoothLandingUWP
                 await dialog.ShowAsync();
             }
         }
-
-      
     }
 }
