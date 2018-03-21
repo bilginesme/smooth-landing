@@ -50,13 +50,21 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
     </Page.Resources>
 
-    <Canvas>
+    <Canvas Name="theCanvas">
         <Button x:Name="CmdPlay" Click="CmdPlay_Click" Style="{StaticResource RefreshButtonStyle}" Content="&#xEDB5;"  ElementSoundMode="Default" />
         <Button x:Name="CmdPause" Click="CmdPause_Click" Style="{StaticResource RefreshButtonStyle}"  Content="&#xEDB4;"  ElementSoundMode="Default" />
-        <TextBlock x:Name="TxtCounter" Text="00:00" FontSize="48" FontWeight="Bold"  />
-        <TextBlock x:Name="TxtStatus" Text="status" FontSize="24" FontWeight="Normal" Canvas.Left="11" Canvas.Top="92"  />
-        <TextBlock x:Name="TxtState" Text="state" FontSize="24" FontWeight="Normal" Canvas.Left="103" Canvas.Top="92"  />
+        <TextBlock x:Name="TxtCounter" Text="00:00" FontSize="48" FontWeight="Bold" Canvas.Left="80" Canvas.Top="12"  />
+        <TextBlock x:Name="TxtStatus" Text="status" FontSize="24" FontWeight="Normal" Canvas.Left="11" Canvas.Top="92" Visibility="Collapsed"  />
+        <TextBlock x:Name="TxtState" Text="state" FontSize="24" FontWeight="Normal" Canvas.Left="103" Canvas.Top="92" Visibility="Collapsed"  />
+
+        <Image Name="imgPomodoro1" Source="Assets/tomato-normal.png" Canvas.Left="80" Canvas.Top="0" />
+        <Image Name="imgPomodoro2" Source="Assets/tomato-normal.png" Canvas.Left="106" Canvas.Top="0" />
+        <Image Name="imgPomodoro3" Source="Assets/tomato-normal.png" Canvas.Left="132" Canvas.Top="0" />
+        <TextBlock x:Name="txtPlus" Text="+1" FontSize="16" FontWeight="Bold" Canvas.Left="150" Canvas.Top="6" Visibility="Collapsed"  />
+        <TextBlock x:Name="txtPercentage" Text="100%" FontSize="14" FontWeight="Normal" Canvas.Left="17" Canvas.Top="26" Visibility="Collapsed" />
+        <Image Name="imgVista" Source="Assets/bakacakkadi.png" Canvas.Left="0" Canvas.Top="75" Width="300" Height="100" />
     </Canvas>
 </Page>

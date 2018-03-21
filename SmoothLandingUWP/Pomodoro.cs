@@ -154,6 +154,7 @@ namespace SmoothLandingUWP
                 }
             }
         } 
+        private float GetSecondsPassed() { return (float)tsNow.TotalSeconds; }
         #endregion
 
         #region Public Methods
@@ -214,7 +215,7 @@ namespace SmoothLandingUWP
         {
             int percentage = 0;
 
-            float secondsPassed = (float)tsNow.TotalSeconds;
+            float secondsPassed = GetSecondsPassed();
             if (state == StateEnum.Working)
                 percentage = (int)(100f * (float)secondsPassed / (float)secondsWorking);
             else if (state == StateEnum.RestingShort)
@@ -278,6 +279,29 @@ namespace SmoothLandingUWP
             return result;
         }
         public bool IsDateDifferent() { return theDay != DateTime.Today; }
+        public static float GetTotalPomodoroTime()
+        {
+            return secondsWorking * NumSlicesForPomodoro + secondsRestingShort * (NumSlicesForPomodoro - 1) + secondsRestingLong;
+        }
+        public float GetActualTimeForThisPomodoro()
+        {
+            float uptoNow = 0;
+            float secondsPassed = GetSecondsPassed();
+
+            if (state == StateEnum.Working)
+                uptoNow = (sliceNow - 1) * secondsWorking + (sliceNow - 1) * secondsRestingShort + secondsPassed;
+            else if (state == StateEnum.WorkCompleted)
+                uptoNow = (sliceNow) * secondsWorking + (sliceNow - 1) * secondsRestingShort;
+            else if (state == StateEnum.Initial)
+                uptoNow = 0;
+            else
+                uptoNow = (sliceNow) * secondsWorking + (sliceNow - 1) * secondsRestingShort + secondsPassed;
+
+            return uptoNow;
+        }
+        public static float GetPercentageWorkSessionOverTotal() { return 100f * secondsWorking / GetTotalPomodoroTime(); }
+        public static float GetPercentageRestingShortSessionOverTotal() { return 100f * secondsRestingShort / GetTotalPomodoroTime(); }
+        public static float GetPercentageRestingLongSessionOverTotal() { return 100f * secondsRestingLong / GetTotalPomodoroTime(); }
         #endregion
 
         #region Public Properties

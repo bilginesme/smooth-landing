@@ -15,12 +15,8 @@ using Windows.UI.Popups;
 using Windows.System.Threading;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
+using Windows.UI.Xaml.Media.Imaging;
+ 
 namespace SmoothLandingUWP
 {
     public sealed partial class MainPage : Page
@@ -51,8 +47,16 @@ namespace SmoothLandingUWP
         const int xStartProgress = 10;
 
         bool isStartedDayTransition = false;
+
+        RingSlice rsInner;
+        Dictionary<int, RingSlice> ringSlicesWork;
+        Dictionary<int, RingSlice> ringSlicesRest;
+        double opacityWorkMin = 0.25, opacityRestMin = 0.15;
+        double opacityWorkMax = 1, opacityRestMax = 1;
         #endregion
 
+        DispatcherTimer Timer60Seconds;
+        DispatcherTimer TimerBlink;
 
         #region Constructors
         public MainPage()
@@ -85,9 +89,20 @@ namespace SmoothLandingUWP
             theGrid.Children.Add(textBlock1);
             */
 
-            CmdPlay.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
-            CmdPause.RenderTransform = new TranslateTransform { X = 200, Y = 20 };
-            TxtCounter.RenderTransform = new TranslateTransform { X = 20, Y = 30 };
+            CmdPlay.RenderTransform = new TranslateTransform { X = 250, Y = 10 };
+            CmdPause.RenderTransform = new TranslateTransform { X = 250, Y = 10 };
+
+            //TxtCounter.RenderTransform = new TranslateTransform { X = 80, Y = 18 };
+
+            Timer60Seconds = new DispatcherTimer();
+            Timer60Seconds.Tick += Timer60SecondsTick;
+            Timer60Seconds.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            Timer60Seconds.Start();
+
+            TimerBlink = new DispatcherTimer();
+            TimerBlink.Tick += TimerBlinkTick;
+            TimerBlink.Interval = new TimeSpan(0, 0, 0, 0, 10);
+            TimerBlink.Start();
 
             InitPomodoro();
 
@@ -98,12 +113,26 @@ namespace SmoothLandingUWP
             ElementSoundPlayer.State = ElementSoundPlayerState.On;
             ElementSoundPlayer.Volume = 0.5;
 
-            DispatcherTimer Timer60Seconds = new DispatcherTimer();
-            Timer60Seconds.Tick += Timer60SecondsTick;
-            Timer60Seconds.Interval = new TimeSpan(0, 0, 0, 0, 10);
-            Timer60Seconds.Start();
-
             UpdateEverything();
+
+            /*
+            Image imgNew = new Image();
+            BitmapImage bitmapImage = new BitmapImage();
+            Uri uri = new Uri("ms-appx:///Assets/tomato-normal.png");
+            bitmapImage.UriSource = uri;
+            imgNew.Source = bitmapImage;
+            Canvas.SetLeft(imgNew, 20);
+            theCanvas.Children.Add(imgNew);
+            */
+
+            ConstructRingSlices();
+
+            ApplicationViewTitleBar formattableTitleBar = ApplicationView.GetForCurrentView().TitleBar;
+            formattableTitleBar.ButtonBackgroundColor = Windows.UI.Colors.Transparent;
+            Windows.ApplicationModel.Core.CoreApplicationViewTitleBar coreTitleBar = Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+
+            //theCanvas.Background = new SolidColorBrush(Windows.UI.Colors.Red);
         }
         #endregion
 
@@ -121,6 +150,79 @@ namespace SmoothLandingUWP
 
             //SetTsDateText();
         }
+        private void ConstructRingSlices()
+        {
+            Brush brushInner = new SolidColorBrush(Windows.UI.Color.FromArgb(200, 84, 168, 168));
+            Brush brushWork = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 218, 99, 89));
+            Brush brushRest = new SolidColorBrush(Windows.UI.Color.FromArgb(255, 226, 237, 53));
+
+            double angleWork = 360 *  (double)Pomodoro.GetPercentageWorkSessionOverTotal() / 100;
+            double angleRestShort = 360 * (double)Pomodoro.GetPercentageRestingShortSessionOverTotal() / 100;
+            double angleRestLong = 360 * (double)Pomodoro.GetPercentageRestingLongSessionOverTotal() / 100;
+
+            double startAngle = 0;
+            double endAngle = 0;
+
+            double radius = 36;
+            double thickness = 7;
+            double xPos = 5, yPos = 0;
+
+            ringSlicesWork = new Dictionary<int, RingSlice>();
+            ringSlicesRest = new Dictionary<int, RingSlice>();
+
+            for (int i=1;i<=Pomodoro.NumSlicesForPomodoro;i++)
+            {
+                startAngle = (i - 1) * (angleWork + angleRestShort);
+                endAngle = startAngle + angleWork;
+
+                RingSlice rsWork = new RingSlice()
+                {
+                    StartAngle = startAngle,
+                    EndAngle = endAngle,
+                    Fill = brushWork,
+                    Radius = radius,
+                    InnerRadius = radius-thickness,
+                    Stroke = brushWork
+                };
+                rsWork.RenderTransform = new TranslateTransform { X = xPos, Y = yPos };
+                theCanvas.Children.Add(rsWork);
+                ringSlicesWork.Add(i, rsWork);
+
+                startAngle = endAngle;
+                if(i != Pomodoro.NumSlicesForPomodoro)
+                    endAngle = startAngle + angleRestShort;
+                else
+                    endAngle = startAngle + angleRestLong;
+
+                if (endAngle >= 360)
+                    endAngle = 359;
+
+                RingSlice rsRest = new RingSlice()
+                {
+                    StartAngle = startAngle,
+                    EndAngle = endAngle,
+                    Fill = brushRest,
+                    Radius = radius,
+                    InnerRadius = radius - thickness,
+                    Stroke = brushRest
+                };
+                rsRest.RenderTransform = new TranslateTransform { X = xPos, Y = yPos };
+                theCanvas.Children.Add(rsRest);
+                ringSlicesRest.Add(i, rsRest);
+            }
+
+            rsInner = new RingSlice()
+            {
+                StartAngle = 0,
+                EndAngle = 0,
+                Fill = brushInner,
+                Radius = radius - thickness,
+                InnerRadius = 1,
+                Stroke = brushInner
+            };
+            rsInner.RenderTransform = new TranslateTransform { X = xPos + thickness, Y = thickness };
+            theCanvas.Children.Add(rsInner);
+        }
 
         private async void UpdateEverything()
         {
@@ -129,12 +231,22 @@ namespace SmoothLandingUWP
             TxtState.Text = pomodoro.State.ToString();
             await XMLEngine.UpdatePomodoro(pomodoro);
             HandleDayTransition();
+            UpdatePomodoros();
+            UpdateRings();
         }
 
         private void Timer60SecondsTick(object sender, object e)
         {
             pomodoro.AddOneSecond();
             UpdateEverything();
+        }
+        private void TimerBlinkTick(object sender, object e)
+        {
+            double opacity = rsInner.Opacity + 0.02;
+            if (opacity > 1)
+                opacity = 0.5;
+
+            rsInner.Opacity = opacity;
         }
         private void HandleDayTransition()
         {
@@ -161,11 +273,13 @@ namespace SmoothLandingUWP
         {
             CmdPause.Visibility = Visibility.Collapsed;
             CmdPlay.Visibility = Visibility.Visible;
+            TimerBlink.Start();
         }
         private void Pomodoro_OnStarted(object sender, Pomodoro.StartedArgs e)
         {
             CmdPause.Visibility = Visibility.Visible;
             CmdPlay.Visibility = Visibility.Collapsed;
+            TimerBlink.Stop();
         }
         private void Pomodoro_OnWorkJustCompleted(object sender, Pomodoro.WorkJustCompletedArgs e)
         {
@@ -237,12 +351,134 @@ namespace SmoothLandingUWP
             // Send the toast.
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+        private void UpdatePomodoros()
+        {
+            imgPomodoro1.Opacity = 0.2;
+            imgPomodoro2.Opacity = 0.2;
+            imgPomodoro3.Opacity = 0.2;
+            txtPlus.Text = "";
+            txtPlus.Visibility = Visibility.Collapsed;
+
+            int n = pomodoro.NumPomodorosToday;
+
+            if (n > 0)
+                imgPomodoro1.Opacity = 1;
+            if (n > 1)
+                imgPomodoro2.Opacity = 1;
+            if (n > 2)
+                imgPomodoro3.Opacity = 1;
+
+            if (n > 3)
+            {
+                txtPlus.Text = "+" + (n - 3);
+                txtPlus.Visibility = Visibility.Visible;
+            }
+
+            return;
+
+            int posY = 20;
+            for (int i = 0; i < 3; i++)
+            {
+                int posX = 50 + 25 * i;
+
+                Image img = new Image();
+                BitmapImage bitmapImage = new BitmapImage();
+                Uri uri = new Uri("ms-appx:///Assets/tomato-normal.png");
+
+                if (i < pomodoro.NumPomodorosToday)
+                    new Uri("ms-appx:///Assets/tomato-normal.png");
+                else
+                    new Uri("ms-appx:///Assets/tomato-transparent.png");
+                 
+                bitmapImage.UriSource = uri;
+                img.Source = bitmapImage;
+                img.Width = 24;
+                img.Height = 24;
+                Canvas.SetLeft(img, posX);
+                Canvas.SetTop(img, posY);
+
+                theCanvas.Children.Add(img);
+            }
+          
+            //if (pomodoro.NumPomodorosToday > 3)
+                //dc.DrawString("+" + (pomodoro.NumPomodorosToday - 3), fontBold, brushNormal, 206, 11);
+        }
+        private void UpdateRings()
+        {
+            int percentage = (int)(100f * pomodoro.GetActualTimeForThisPomodoro() / Pomodoro.GetTotalPomodoroTime());
+            txtPercentage.Text = percentage + "%";
+            rsInner.StartAngle = 0;
+            rsInner.EndAngle = (int)(percentage * 360f / 100f);
+            if (rsInner.EndAngle == 360)
+                rsInner.EndAngle = 359.99999;
+           
+            double opacityWork = 1, opacityRest = 1;
+
+            for (int i = 1; i <= Pomodoro.NumSlicesForPomodoro; i++)
+            {
+                
+                if (pomodoro.State == Pomodoro.StateEnum.Working)
+                {
+                    if (i < pomodoro.SliceNow)
+                    {
+                        opacityWork = opacityWorkMax;
+                        opacityRest = opacityRestMax;
+                    }
+                    else
+                    {
+                        opacityWork = opacityWorkMin;
+                        opacityRest = opacityRestMin;
+                    }
+                }
+                else if (pomodoro.State == Pomodoro.StateEnum.WorkCompleted)
+                {
+                    if (i <= pomodoro.SliceNow)
+                        opacityWork = opacityWorkMax;
+                    else
+                        opacityWork = opacityWorkMin;
+
+                    if (i <= pomodoro.SliceNow - 1)
+                        opacityRest = opacityRestMax;
+                    else
+                        opacityRest = opacityRestMin;
+                }
+                else if (pomodoro.State == Pomodoro.StateEnum.RestingShort || pomodoro.State == Pomodoro.StateEnum.RestingLong)
+                {
+                    if (i < pomodoro.SliceNow)
+                        opacityRest = opacityRestMax;
+                    else
+                        opacityRest = opacityRestMin;
+
+                    if (i <= pomodoro.SliceNow)
+                        opacityWork = opacityWorkMax;
+                    else
+                        opacityWork = opacityWorkMin;
+                }
+                else if (pomodoro.State == Pomodoro.StateEnum.RestingShortCompleted || pomodoro.State == Pomodoro.StateEnum.RestingLongCompleted)
+                {
+                    if (i <= pomodoro.SliceNow)
+                        opacityRest = opacityRestMax;
+                    else
+                        opacityRest = opacityRestMin;
+
+                    if (i <= pomodoro.SliceNow)
+                        opacityWork = opacityWorkMax;
+                    else
+                        opacityWork = opacityWorkMin;
+                }
+
+                ringSlicesWork[i].Opacity = opacityWork;
+                ringSlicesRest[i].Opacity = opacityRest;
+            }
+
+            
+        }
         #endregion
 
         #region Form Events
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ApplicationView.GetForCurrentView().TryResizeView(new Windows.Foundation.Size(300, 150));
+            ApplicationView.GetForCurrentView().TryResizeView(new Windows.Foundation.Size(300, 190));
         }
         private void Page_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
