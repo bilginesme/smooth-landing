@@ -1,0 +1,31 @@
+{
+  "name": "npmTask",
+  //...
+  "suppressTaskName": true,
+  "command": "npm",
+  "isShellCommand": true,
+  
+  "tasks": [
+    {
+      "taskName": "build",
+      "isBuildCommand": true,
+      "isTestCommand": false,
+      "showOutput": "always",
+      "args": [
+        "run",
+        "compile:ts"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "taskName": "install",
+      "isBuildCommand": false,
+      "isTestCommand": true,
+      "showOutput": "always",
+      "args": [
+        "run",
+        "inst"
+      ]
+    }
+  ]
+}
