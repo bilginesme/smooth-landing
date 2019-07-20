@@ -266,7 +266,7 @@ namespace SmoothLanding
             bmpVistas = new List<Bitmap>();
             numVista = 0;
 
-            foreach(string strFile in System.IO.Directory.EnumerateFiles(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\vista"))
+            foreach(string strFile in System.IO.Directory.EnumerateFiles(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\vista"))
             {
                 Bitmap bmpVista = (Bitmap)Bitmap.FromFile(strFile);
                 bmpVistas.Add(bmpVista);
@@ -326,28 +326,28 @@ namespace SmoothLanding
         {
             buttons = new List<XaramaButtonInfo>();
 
-            Bitmap bmpPlayNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-normal.png");
-            Bitmap bmpPlayHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\play-hovered.png");
+            Bitmap bmpPlayNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\play-normal.png");
+            Bitmap bmpPlayHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\play-hovered.png");
             XaramaButtonInfo cmdStart = new XaramaButtonInfo(bmpPlayNormal, bmpPlayHovered, bmpPlayNormal, new Rectangle(247, 4, 32, 32), "Start", XaramaButtonInfo.ContextEnum.Start);
             //XaramaButtonInfo cmdStart = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Start, ">", new Point(247, 4), new Size(30, 30));
             cmdStart.OnClicked += cmdStart_OnClicked;
             cmdStart.Show();
 
-            Bitmap bmpInfoNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\info-normal.png");
-            Bitmap bmpInfoHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\info-hovered.png");
+            Bitmap bmpInfoNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\info-normal.png");
+            Bitmap bmpInfoHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\info-hovered.png");
             XaramaButtonInfo cmdInfo = new XaramaButtonInfo(bmpInfoNormal, bmpInfoHovered, bmpInfoNormal, new Rectangle(226, 2, 24, 24), "Info", XaramaButtonInfo.ContextEnum.Info);
             cmdInfo.OnClicked += cmdInfo_OnClicked;
             cmdInfo.Hide();
 
-            Bitmap bmpPauseNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-normal.png");
-            Bitmap bmpPauseHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\pause-hovered.png");
+            Bitmap bmpPauseNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\pause-normal.png");
+            Bitmap bmpPauseHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\pause-hovered.png");
             XaramaButtonInfo cmdPause = new XaramaButtonInfo(bmpPauseNormal, bmpPauseHovered, bmpPauseNormal, new Rectangle(247, 4, 32, 32), "Pause", XaramaButtonInfo.ContextEnum.Pause);
             //XaramaButtonInfo cmdPause = XaramaButtonEngine.YellowGreenButton(XaramaButtonInfo.ContextEnum.Pause, "||", new Point(247, 4), new Size(30, 30));
             cmdPause.OnClicked += cmdPause_OnClicked;
             cmdPause.Hide();
 
-            Bitmap bmpEnlargeNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-normal.png");
-            Bitmap bmpEnlargeHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\enlarge-hovered.png");
+            Bitmap bmpEnlargeNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\enlarge-normal.png");
+            Bitmap bmpEnlargeHovered = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\enlarge-hovered.png");
             XaramaButtonInfo cmdImageEnlarge = new XaramaButtonInfo(bmpEnlargeNormal, bmpEnlargeHovered, bmpEnlargeNormal,
                 new Rectangle(new Point(formSizes[FormStateEnum.Compact].Width - 20 - 9, formSizes[FormStateEnum.Compact].Height + 9), new Size(20, 20)),
                 "Enlarge Image", XaramaButtonInfo.ContextEnum.EnlargeImage);
@@ -413,8 +413,8 @@ namespace SmoothLanding
             CreateButtons();
             CreateBrushesAndFonts();
 
-            bmpPomodoroNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
-            bmpPomodoroTransparent = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-transparent.png");
+            bmpPomodoroNormal = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\tomato-normal.png");
+            bmpPomodoroTransparent = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\tomato-transparent.png");
 
             GetVistaImages();
 

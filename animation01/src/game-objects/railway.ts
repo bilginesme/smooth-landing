@@ -3,11 +3,11 @@
 
     export class Railway extends Phaser.Sprite {
         private dtc:DTC;
-        //private secondsForNewTrain:number = 120;
-        //private pTrain:number = 0.3;
+        private secondsForNewTrain:number = 120;
+        private pTrain:number = 0.3;
 
-        private secondsForNewTrain:number = 1;
-        private pTrain:number = 1;
+        //private secondsForNewTrain:number = 1;
+        //private pTrain:number = 1;
 
         private trainState:TrainStateEnum = TrainStateEnum.Stopped;
         private railroad: Phaser.Sprite;
@@ -84,7 +84,7 @@
 
                     var trainArrayNo = this.game.rnd.integerInRange(0, this.trainArrays.length - 1);
 
-                    trainArrayNo = 5;
+                    //trainArrayNo = 5; // for DEVELOPMENT PURPOSES
 
                     var velocity = this.game.rnd.realInRange(this.trainArrays[trainArrayNo][0], this.trainArrays[trainArrayNo][1]);
                     console.log("Speed is " + velocity);
@@ -118,7 +118,7 @@
                     }
                     
                     this.trainState = TrainStateEnum.Running;
-                    this.game.add.audio('train-whistle', 0.1, false).play();
+                    this.game.add.audio('train-whistle', 0.03, false).play();
                     console.log("Started");
                 }
                 else {

@@ -27,8 +27,8 @@ namespace SmoothLanding
         {
             this.pomodoro = pomodoro;
             statistics = XMLEngine.ReadStatisticsFromXML();
-            bmpPomodoroRipe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-normal.png");
-            bmpPomodoroUnripe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\tomato-unripe.png");
+            bmpPomodoroRipe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\tomato-normal.png");
+            bmpPomodoroUnripe = (Bitmap)Bitmap.FromFile(@"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\tomato-unripe.png");
 
             InitializeComponent();
         }

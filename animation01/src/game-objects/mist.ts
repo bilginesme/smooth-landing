@@ -23,7 +23,7 @@
         //private msBetweenCycles:number = 1 * 1000;
 
         private msCheckForAnotherMist:number = 60 * 1000;
-        private pMist = 0.1;
+        private pMist = 0.075;
         //private pMist = 1;
 
         private tweenPrimary;

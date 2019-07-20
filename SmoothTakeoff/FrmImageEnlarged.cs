@@ -54,7 +54,7 @@ namespace SmoothLanding
             Size = new Size(W, H);
             Location = location;
 
-            string strIconsFolder = @"C:\Users\besme\Desktop\SmoothLanding\SmoothLanding\images\";
+            string strIconsFolder = @"C:\Users\besme\Desktop\SmoothTakeoff\SmoothTakeoff\images\";
 
             Bitmap bmpCloseNormal = (Bitmap)Bitmap.FromFile(strIconsFolder + "close-normal.png");
             Bitmap bmpCloseHovered = (Bitmap)Bitmap.FromFile(strIconsFolder + "close-hovered.png");
