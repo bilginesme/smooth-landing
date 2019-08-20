@@ -36,7 +36,10 @@ module MyGame {
 			for(var i=1;i<=this.dtc.numRailcarsPassenger;i++)
 				this.game.load.image('railcar-' + this.dtc.tripleDigit(i), 'assets/train/railcars/railcar-' + this.dtc.tripleDigit(i) + '.png');
 
-			for(var i=601;i<=601 + this.dtc.numRailcarsRestaurant;i++)
+			for(var i=501;i<501 + this.dtc.numRailcarsCouchettes;i++)
+				this.game.load.image('railcar-' + this.dtc.tripleDigit(i), 'assets/train/railcars/railcar-' + this.dtc.tripleDigit(i) + '.png');
+
+			for(var i=601;i<601 + this.dtc.numRailcarsRestaurant;i++)
 				this.game.load.image('railcar-' + this.dtc.tripleDigit(i), 'assets/train/railcars/railcar-' + this.dtc.tripleDigit(i) + '.png');
 
 			this.game.load.image('railroad', 'assets/train/railroad.png');

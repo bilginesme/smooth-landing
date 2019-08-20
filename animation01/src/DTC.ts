@@ -23,8 +23,8 @@ module MyGame {
         //public numRailcars:number = 6;    not needed anymore
         public numRailcarsPassenger = 25;    // 1-300
         public numRailcarsMail = 2;         // 301-500
-        public numRailcarsCouchettes = 0;   // 501-600
-        public numRailcarsRestaurant = 0;   // 601-700
+        public numRailcarsCouchettes = 9;   // 501-600
+        public numRailcarsRestaurant = 2;   // 601-700
         public numRailcarsCargo = 0;        // 701-999
 
         public numMaxCarsIncludingLocomotive:number = 10;
